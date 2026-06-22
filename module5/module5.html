@@ -1,0 +1,1541 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>模块五：核心音频特征关联分析 | 统统可视化</title>
+    <!-- Font Awesome 6 图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- ECharts 核心库 -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+    <!-- ECharts GL 3D扩展库 -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts-gl@2.0.9/dist/echarts-gl.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            padding: 25px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 背景装饰 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 50% 50%, rgba(78, 205, 196, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 头部 */
+        /*.header {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 35px 40px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header h1 {
+            font-size: 32px;
+            color: #fff;
+            margin-bottom: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .header h1 span {
+            background: linear-gradient(135deg, #667eea, #764ba2, #4ecdc4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            background-size: 200% 200%;
+            animation: gradientShift 3s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 15px;
+            letter-spacing: 0.5px;
+        }*/
+        /* ========== 新顶部样式（模块二风格） ========== */
+.hero-band {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 390px;
+    align-items: center;
+    gap: 34px;
+    padding: 34px 36px;
+    border-radius: 24px;
+    margin-bottom: 20px;
+    background: rgba(255, 250, 237, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+.eyebrow {
+    margin: 0 0 10px;
+    color: #97323d;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+.hero-band h1 {
+    margin: 0;
+    font-size: 44px;
+    line-height: 1.18;
+    color: #111c2f;
+    letter-spacing: -0.5px;
+}
+.hero-copy {
+    max-width: 780px;
+    margin: 16px 0 0;
+    color: #4f3d39;
+    font-size: 17px;
+    line-height: 1.75;
+}
+.music-visual {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 210px;
+}
+.vinyl-disc {
+    position: relative;
+    width: 238px;
+    height: 150px;
+    border-radius: 16px;
+    background:
+        radial-gradient(circle at 34% 48%, #d7aa3c 0 14px, #111827 15px 27px, transparent 28px),
+        radial-gradient(circle at 66% 48%, #97323d 0 14px, #111827 15px 27px, transparent 28px),
+        linear-gradient(0deg, transparent 0 28px, rgba(255, 255, 255, 0.88) 29px 86px, transparent 87px),
+        repeating-linear-gradient(0deg, #111827 0 5px, #1c2434 6px 8px);
+    box-shadow: 0 24px 38px rgba(32, 16, 16, 0.32);
+    transform: rotate(-10deg);
+}
+.vinyl-disc::before {
+    position: absolute;
+    left: 28px;
+    right: 28px;
+    top: 22px;
+    height: 16px;
+    border-radius: 4px;
+    background: #111827;
+    box-shadow:
+        34px 0 0 #111827,
+        68px 0 0 #111827,
+        102px 0 0 #111827,
+        136px 0 0 #111827;
+    content: "";
+}
+.vinyl-disc span {
+    position: absolute;
+    left: 46px;
+    bottom: 18px;
+    width: 146px;
+    height: 28px;
+    border: 2px solid rgba(17, 24, 39, 0.28);
+    border-radius: 3px;
+    background: #fffaf1;
+}
+.vinyl-disc span::after {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    top: 8px;
+    height: 2px;
+    background: rgba(17, 24, 39, 0.22);
+    box-shadow: 0 8px 0 rgba(17, 24, 39, 0.22);
+    content: "";
+}
+.wave-bars {
+    position: absolute;
+    right: 0;
+    bottom: 8px;
+    display: flex;
+    align-items: end;
+    gap: 5px;
+    height: 92px;
+    padding: 12px 14px;
+    border: 2px solid rgba(24, 32, 51, 0.12);
+    border-radius: 14px;
+    background: rgba(255, 250, 237, 0.68);
+    backdrop-filter: blur(10px);
+}
+.wave-bars i {
+    display: block;
+    width: 5px;
+    height: calc(var(--level) * 1px);
+    border-radius: 999px;
+    background: linear-gradient(180deg, #446a8f, #1f8f7a);
+}
+
+/* 指标卡片网格 */
+.metric-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin: 0 0 20px 0;
+}
+.metric-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 96px;
+    padding: 16px 18px;
+    border: 2px solid rgba(24, 32, 51, 0.08);
+    border-radius: 14px;
+    background: rgba(255, 250, 237, 0.85);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.15);
+}
+.metric-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 42px;
+    height: 42px;
+    padding: 0 9px;
+    border-radius: 12px;
+    color: #ffffff;
+    background: linear-gradient(135deg, #97323d, #d7aa3c);
+    font-size: 20px;
+    font-weight: 800;
+}
+.metric-card p {
+    margin: 0 0 4px;
+    color: #6a7a8f;
+    font-size: 14px;
+}
+.metric-card strong {
+    display: block;
+    color: #111c2f;
+    font-size: 25px;
+    line-height: 1.16;
+}
+.metric-card small {
+    display: block;
+    margin-top: 5px;
+    color: #607085;
+    line-height: 1.45;
+}
+.metric-card-wide strong {
+    font-size: 21px;
+}
+
+/* 响应式适配 */
+@media (max-width: 768px) {
+    .hero-band {
+        grid-template-columns: 1fr;
+        padding: 24px 20px;
+    }
+    .hero-band h1 {
+        font-size: 28px;
+    }
+    .metric-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+        /* 标签页切换按钮 */
+        .tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 8px 30px;
+            gap: 12px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .tab-btn {
+            padding: 14px 30px;
+            font-size: 15px;
+            font-weight: 600;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.6);
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .tab-btn:hover::before {
+            left: 100%;
+        }
+
+        .tab-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .tab-btn.active {
+            color: #fff;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.4), rgba(118, 75, 162, 0.4));
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* 筛选栏 */
+        .filter-bar {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 16px 30px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .filter-bar span {
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+        }
+
+        /*#genre-filter, #heatmap-genre-filter {
+            padding: 12px 24px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.08);
+            font-size: 14px;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: #fff;
+            min-width: 180px;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+        }
+
+        #genre-filter:hover, #heatmap-genre-filter:hover {
+            border-color: rgba(102, 126, 234, 0.6);
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.2);
+        }
+
+        #genre-filter option, #heatmap-genre-filter option {
+            background: #1a1a2e;
+            color: #fff;
+            padding: 10px;
+        }*/
+        /* 下拉框 — 浅色半透明风格 */
+#genre-filter,
+#heatmap-genre-filter {
+    background: rgba(255, 250, 237, 0.9);   /* 暖白半透明，与顶部卡片一致 */
+    border: 1px solid rgba(24, 32, 51, 0.2);
+    color: #2d3748;                         /* 深灰色文字，可读性好 */
+    font-weight: 500;
+    padding: 12px 28px 12px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%232d3748' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    background-size: 14px;
+}
+
+#genre-filter option,
+#heatmap-genre-filter option {
+    background: #ffffff;        /* 纯白背景 */
+    color: #2d3748;             /* 深灰色文字 */
+    padding: 10px;
+}
+
+/* 悬停效果 */
+#genre-filter:hover,
+#heatmap-genre-filter:hover {
+    background: rgba(255, 250, 237, 1);
+    border-color: #4ecdc4;
+}
+
+        .filter-hint {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* 图表容器 */
+        .chart-panel {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            margin-bottom: 25px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chart-container {
+            display: none;
+            width: 100%;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .chart-container.active {
+            display: block;
+        }
+
+        #heatmap {
+            width: 100%;
+            height: 520px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 10px;
+        }
+
+        #scatter3d {
+            width: 100%;
+            height: 580px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 10px;
+        }
+
+        /* 结论卡片 */
+        .conclusion-card {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            margin-bottom: 25px;
+            animation: fadeInUp 0.7s ease-out 0.1s both;
+        }
+
+        .conclusion-card h3 {
+            color: #2d3748;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid transparent;
+            border-image: linear-gradient(90deg, #667eea, #764ba2, #4ecdc4) 1;
+            display: inline-block;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .conclusion-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 22px;
+        }
+
+        .conclusion-item {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            border-radius: 18px;
+            padding: 24px;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .conclusion-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.5), transparent);
+            opacity: 0;
+            transition: opacity 0.35s ease;
+        }
+
+        .conclusion-item:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.15),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        .conclusion-item:hover::before {
+            opacity: 1;
+        }
+
+        .conclusion-item h4 {
+            color: #2d3748;
+            margin-bottom: 16px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .corr-value {
+            font-size: 36px;
+            font-weight: 800;
+            margin: 15px 0;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            letter-spacing: -1px;
+        }
+
+        .corr-value.positive {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a5a);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .corr-value.weak {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .corr-value.negative {
+            background: linear-gradient(135deg, #4ecdc4, #26a69a);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .interpretation {
+            color: #4a5568;
+            font-size: 14px;
+            line-height: 1.7;
+            margin-top: 12px;
+        }
+
+        .badge {
+            color: #fff;
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 25px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .badge.strong {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a5a);
+            color: white;
+        }
+
+        .badge.medium {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+        }
+
+        .badge.weak {
+            background: linear-gradient(135deg, #7f8c8d, #95a5a6);
+            color: white;
+        }
+
+        /* 加载状态 */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(26, 26, 46, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            z-index: 10;
+        }
+
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(102, 126, 234, 0.3);
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 数据说明 */
+        .data-info {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+            font-size: 13px;
+            color: #4a5568;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 25px;
+            color: #718096;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(102, 126, 234, 0.5);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(102, 126, 234, 0.7);
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 15px; }
+            
+            .header { padding: 25px 20px; }
+            .header h1 { font-size: 24px; }
+            
+            .tab-btn { 
+                padding: 12px 20px; 
+                font-size: 13px; 
+            }
+            
+            .chart-panel { 
+                padding: 20px; 
+            }
+            
+            #heatmap { height: 400px; }
+            #scatter3d { height: 420px; }
+            
+            .corr-value { font-size: 28px; }
+            
+            .conclusion-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            #genre-filter, #heatmap-genre-filter {
+                min-width: 140px;
+                padding: 10px 16px;
+            }
+            
+            .filter-bar {
+                padding: 12px 20px;
+                gap: 12px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .tabs {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .tab-btn {
+                flex: 1;
+                min-width: 140px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="../shared/theme.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <!--<div class="header">
+            <h1><i class="fa-solid fa-waveform" style="color: #667eea; margin-right: 10px;"></i>模块五：<span>核心音频特征关联分析</span></h1>
+            <p><i class="fa-solid fa-star" style="color: #4ecdc4;"></i> 愉悦度 (Valence) · <i class="fa-solid fa-bolt" style="color: #f39c12;"></i> 能量 (Energy) · <i class="fa-solid fa-music" style="color: #96CEB4;"></i> 舞蹈性 (Danceability) | 基于 114,000 首 Spotify 歌曲</p>
+        </div>-->
+        <!-- 新顶部 hero-band -->
+<div class="hero-band">
+    <div>
+        <p class="eyebrow">Spotify 音频特征研究</p>
+        <h1>模块五：核心音频特征关联分析</h1>
+        <p class="hero-copy">
+            愉悦度 · 能量 · 舞蹈性 | 基于 114,000 首 Spotify 歌曲
+        </p>
+    </div>
+    <div class="music-visual" aria-hidden="true">
+        <div class="vinyl-disc"><span></span></div>
+        <div class="wave-bars" id="wave-bars"></div>
+    </div>
+</div>
+
+<!-- 三个统计指标卡片（数据动态更新） -->
+<div class="metric-grid">
+    <div class="metric-card">
+        <span class="metric-icon">🎵</span>
+        <div><p>歌曲总量</p><strong id="totalSongsCount">-</strong></div>
+    </div>
+    <div class="metric-card">
+        <span class="metric-icon">📊</span>
+        <div><p>音频特征</p><strong>3 项</strong><small>愉悦度·能量·舞蹈性</small></div>
+    </div>
+    <div class="metric-card metric-card-wide">
+        <span class="metric-icon">🏷️</span>
+        <div>
+            <p>流派总数</p>
+            <strong id="totalGenresCount">-</strong>
+            <small>基于数据采样</small>
+        </div>
+    </div>
+</div>
+
+        <!-- 标签页 -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchChart('heatmap', this)"><i class="fa-solid fa-square-poll-vertical" style="margin-right: 8px;"></i>相关性热力图</button>
+            <button class="tab-btn" onclick="switchChart('scatter3d', this)"><i class="fa-solid fa-cube" style="margin-right: 8px;"></i>3D 空间分布图</button>
+        </div>
+
+        <!-- 图表区域 -->
+        <div class="chart-panel" style="position: relative;">
+            <!-- 热力图筛选栏 -->
+            <div id="heatmap-filter-bar" class="filter-bar">
+                <span><i class="fa-solid fa-filter" style="margin-right: 6px;"></i>流派筛选：</span>
+                <select id="heatmap-genre-filter">
+                    <option value="all"> 全部流派（总体）</option>
+                </select>
+                <span class="filter-hint"><i class="fa-solid fa-circle-info" style="margin-right: 6px;"></i>选择流派查看该流派的相关系数</span>
+            </div>
+            
+            <div id="heatmap-chart" class="chart-container active">
+                <div id="heatmap"></div>
+            </div>
+            
+            <!-- 3D图筛选栏 -->
+            <div id="scatter3d-filter-bar" class="filter-bar" style="display: none;">
+                <span><i class="fa-solid fa-filter" style="margin-right: 6px;"></i>流派筛选：</span>
+                <select id="genre-filter">
+                    <option value="all"> 全部流派（显示所有）</option>
+                </select>
+                <span class="filter-hint"><i class="fa-solid fa-circle-info" style="margin-right: 6px;"></i>鼠标拖拽旋转视角、滚轮缩放、悬停显示详情</span>
+            </div>
+            
+            <div id="scatter3d-chart" class="chart-container">
+                <div id="scatter3d"></div>
+            </div>
+        </div>
+
+        <!-- 热力图结论卡片 -->
+        <div class="conclusion-card" id="heatmap-conclusion-card">
+            <h3><i class="fa-solid fa-square-poll-vertical" style="margin-right: 8px;"></i>热力图分析结论</h3>
+            <div class="conclusion-grid">
+                <div class="conclusion-item">
+                    <h4><i class="fa-solid fa-star" style="color: #4ecdc4; margin-right: 6px;"></i>愉悦度 ↔ <i class="fa-solid fa-music" style="color: #96CEB4; margin-right: 6px;"></i>舞蹈性</h4>
+                    <div class="corr-value positive" id="heatmap-corr-val-dance">0.477</div>
+                    <div class="interpretation" id="heatmap-interpretation-dance">
+                        呈中等正相关关系。意味着歌曲越让人感到愉悦欢快，通常也越适合跳舞。
+                    </div>
+                    <span class="badge medium" id="heatmap-badge-dance">中等正相关</span>
+                </div>
+                <div class="conclusion-item">
+                    <h4><i class="fa-solid fa-star" style="color: #4ecdc4; margin-right: 6px;"></i>愉悦度 ↔ <i class="fa-solid fa-bolt" style="color: #f39c12; margin-right: 6px;"></i>能量</h4>
+                    <div class="corr-value weak" id="heatmap-corr-val-energy">0.259</div>
+                    <div class="interpretation" id="heatmap-interpretation-energy">
+                        呈弱正相关关系。愉悦度和能量相对独立，可以出现高能量但低愉悦度的歌曲。
+                    </div>
+                    <span class="badge weak" id="heatmap-badge-energy">弱相关</span>
+                </div>
+                <div class="conclusion-item">
+                    <h4><i class="fa-solid fa-bolt" style="color: #f39c12; margin-right: 6px;"></i>能量 ↔ <i class="fa-solid fa-music" style="color: #96CEB4; margin-right: 6px;"></i>舞蹈性</h4>
+                    <div class="corr-value weak" id="heatmap-corr-energy-dance">0.134</div>
+                    <div class="interpretation" id="heatmap-interpretation-energy-dance">
+                        呈极弱相关关系。能量高低不代表舞蹈性的强弱，高能量的重金属摇滚往往舞蹈性较低。
+                    </div>
+                    <span class="badge weak" id="heatmap-badge-energy-dance">极弱相关</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3D图结论卡片 -->
+        <div class="conclusion-card" id="scatter3d-conclusion-card" style="display: none;">
+            <h3><i class="fa-solid fa-cube" style="margin-right: 8px;"></i>3D图分析结论</h3>
+            <div class="conclusion-grid">
+                <div class="conclusion-item">
+                    <h4><i class="fa-solid fa-star" style="color: #4ecdc4; margin-right: 6px;"></i>愉悦度 ↔ <i class="fa-solid fa-music" style="color: #96CEB4; margin-right: 6px;"></i>舞蹈性</h4>
+                    <div class="corr-value positive" id="scatter3d-corr-val-dance">0.477</div>
+                    <div class="interpretation" id="scatter3d-interpretation-dance">
+                        呈中等正相关关系。意味着歌曲越让人感到愉悦欢快，通常也越适合跳舞。
+                    </div>
+                    <span class="badge medium" id="scatter3d-badge-dance">中等正相关</span>
+                </div>
+                <div class="conclusion-item">
+                    <h4><i class="fa-solid fa-star" style="color: #4ecdc4; margin-right: 6px;"></i>愉悦度 ↔ <i class="fa-solid fa-bolt" style="color: #f39c12; margin-right: 6px;"></i>能量</h4>
+                    <div class="corr-value weak" id="scatter3d-corr-val-energy">0.259</div>
+                    <div class="interpretation" id="scatter3d-interpretation-energy">
+                        呈弱正相关关系。愉悦度和能量相对独立，可以出现高能量但低愉悦度的歌曲。
+                    </div>
+                    <span class="badge weak" id="scatter3d-badge-energy">弱相关</span>
+                </div>
+                <div class="conclusion-item">
+                    <h4><i class="fa-solid fa-bolt" style="color: #f39c12; margin-right: 6px;"></i>能量 ↔ <i class="fa-solid fa-music" style="color: #96CEB4; margin-right: 6px;"></i>舞蹈性</h4>
+                    <div class="corr-value weak" id="scatter3d-corr-energy-dance">0.134</div>
+                    <div class="interpretation" id="scatter3d-interpretation-energy-dance">
+                        呈极弱相关关系。能量高低不代表舞蹈性的强弱，高能量的重金属摇滚往往舞蹈性较低。
+                    </div>
+                    <span class="badge weak" id="scatter3d-badge-energy-dance">极弱相关</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 数据说明 -->
+        <div class="data-info">
+            <i class="fa-solid fa-database" style="margin-right: 8px;"></i>数据来源：Kaggle Spotify Tracks Dataset | 样本量：114,000 首歌曲 | 覆盖流派：125种 | 相关系数计算方法：Pearson
+        </div>
+        
+        <div class="footer">
+            <span><i class="fa-solid fa-lightbulb" style="margin-right: 6px;"></i>提示：热力图中鼠标悬停可查看精确数值 | 3D 图中鼠标拖拽旋转视角、滚轮缩放、悬停显示详情</span>
+        </div>
+    </div>
+
+    <script>
+    // 生成动态波浪条（黑胶唱片右侧动画）
+    // 生成动态波浪条（黑胶唱片右侧动画）
+
+    // ========== 全局变量 ==========
+    let original3dData = null;
+    let currentDisplayData = null;
+    let genreColors = {};
+    let scatter3dChart = null;
+    let currentHeatmapChart = null;
+    let genreHeatmaps = {};
+    let overallHeatmapData = null;
+    let chartResizeFrame = 0;
+
+    window.addEventListener('resize', () => {
+        window.cancelAnimationFrame(chartResizeFrame);
+        chartResizeFrame = window.requestAnimationFrame(() => {
+            currentHeatmapChart?.resize();
+            scatter3dChart?.resize();
+        });
+    });
+
+    // 预设颜色池
+    const presetColors = [
+        '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD',
+        '#F39C12', '#E74C3C', '#2ECC71', '#3498DB', '#9B59B6', '#1ABC9C',
+        '#E67E22', '#16A085', '#27AE60', '#2980B9', '#8E44AD', '#C0392B',
+        '#D35400', '#7F8C8D', '#2C3E50', '#F1C40F', '#E84393', '#6C5CE7'
+    ];
+
+    // 根据流派名称生成稳定颜色
+    function getColorForGenre(genre) {
+        let hash = 0;
+        for (let i = 0; i < genre.length; i++) {
+            hash = ((hash << 5) - hash) + genre.charCodeAt(i);
+            hash = hash & hash;
+        }
+        return presetColors[Math.abs(hash) % presetColors.length];
+    }
+
+    // ========== 热力图相关 ==========
+    // 加载总体热力图数据
+    function loadOverallHeatmap() {
+        return fetch('heatmap_overall.json')
+            .then(response => response.json())
+            .then(data => {
+                overallHeatmapData = data;
+                console.log('✅ 加载总体热力图成功');
+                return true;
+            })
+            .catch(error => {
+                console.warn('⚠️ 加载总体热力图失败，使用内置数据');
+                overallHeatmapData = {
+                    xAxis: ["valence", "energy", "danceability"],
+                    yAxis: ["valence", "energy", "danceability"],
+                    data: [
+                        { x: "valence", y: "valence", value: 1.0 },
+                        { x: "energy", y: "valence", value: 0.259 },
+                        { x: "danceability", y: "valence", value: 0.477 },
+                        { x: "valence", y: "energy", value: 0.259 },
+                        { x: "energy", y: "energy", value: 1.0 },
+                        { x: "danceability", y: "energy", value: 0.134 },
+                        { x: "valence", y: "danceability", value: 0.477 },
+                        { x: "energy", y: "danceability", value: 0.134 },
+                        { x: "danceability", y: "danceability", value: 1.0 }
+                    ]
+                };
+                return true;
+            });
+    }
+
+    // 加载流派热力图数据
+    function loadGenreHeatmaps() {
+        return fetch('heatmap_genres.json')
+            .then(response => response.json())
+            .then(data => {
+                genreHeatmaps = data;
+                console.log('✅ 加载流派热力图成功，共', Object.keys(data).length, '个流派');
+                
+                // 填充热力图流派下拉框
+                const select = document.getElementById('heatmap-genre-filter');
+                if (select) {
+                    const genres = Object.keys(data).sort();
+                    genres.forEach(genre => {
+                        const option = document.createElement('option');
+                        option.value = genre;
+                        option.textContent = genre;
+                        select.appendChild(option);
+                    });
+                    
+                    select.onchange = function(e) {
+                        const selectedGenre = e.target.value;
+                        updateHeatmapByGenre(selectedGenre);
+                    };
+                }
+                return true;
+            })
+            .catch(error => {
+                console.warn('⚠️ 加载流派热力图失败:', error);
+                return false;
+            });
+    }
+    
+    function getCorrClass(value) {
+        if (value > 0.5) return 'positive';
+        if (value > 0.3) return 'medium';
+        if (value > 0) return 'weak';
+        return 'negative';
+    }
+
+    // 根据流派更新热力图
+    function updateHeatmapByGenre(genre) {
+        let corrData;
+        let genreNameForDisplay = '';
+        
+        if (genre === 'all') {
+            // 使用总体数据
+            corrData = {
+                valence_energy: 0.259,
+                valence_dance: 0.477,
+                energy_dance: 0.134
+            };
+            genreNameForDisplay = '全部流派';
+        } else {
+            // 使用该流派的数据
+            const genreCorr = genreHeatmaps[genre];
+            if (!genreCorr) {
+                console.warn('该流派数据不足');
+                return;
+            }
+            corrData = {
+                valence_energy: genreCorr.valence_energy,
+                valence_dance: genreCorr.valence_danceability,
+                energy_dance: genreCorr.energy_danceability
+            };
+            genreNameForDisplay = genre;
+        }
+        
+        // 更新热力图数据
+        const newData = [
+            { x: "valence", y: "valence", value: 1.0 },
+            { x: "energy", y: "valence", value: corrData.valence_energy },
+            { x: "danceability", y: "valence", value: corrData.valence_dance },
+            { x: "valence", y: "energy", value: corrData.valence_energy },
+            { x: "energy", y: "energy", value: 1.0 },
+            { x: "danceability", y: "energy", value: corrData.energy_dance },
+            { x: "valence", y: "danceability", value: corrData.valence_dance },
+            { x: "energy", y: "danceability", value: corrData.energy_dance },
+            { x: "danceability", y: "danceability", value: 1.0 }
+        ];
+        
+        // 更新热力图结论卡片中的数值和样式
+        const valDanceEl = document.getElementById('heatmap-corr-val-dance');
+        const valEnergyEl = document.getElementById('heatmap-corr-val-energy');
+        const energyDanceEl = document.getElementById('heatmap-corr-energy-dance');
+        
+        valDanceEl.innerHTML = corrData.valence_dance.toFixed(3);
+        valDanceEl.className = 'corr-value ' + getCorrClass(corrData.valence_dance);
+        
+        valEnergyEl.innerHTML = corrData.valence_energy.toFixed(3);
+        valEnergyEl.className = 'corr-value ' + getCorrClass(corrData.valence_energy);
+        
+        energyDanceEl.innerHTML = corrData.energy_dance.toFixed(3);
+        energyDanceEl.className = 'corr-value ' + getCorrClass(corrData.energy_dance);
+        
+        // 根据数值更新描述文本
+        updateConclusionText(corrData, genreNameForDisplay, 'heatmap');
+        
+        // 重新渲染热力图
+        if (currentHeatmapChart) {
+            updateHeatmapChart(newData);
+        } else {
+            drawHeatmap(newData);
+        }
+    }
+
+    // 更新结论文字
+    function updateConclusionText(corrData, genreName, prefix = 'heatmap') {
+        const danceCorr = corrData.valence_dance;
+        const energyCorr = corrData.valence_energy;
+        const danceEnergyCorr = corrData.energy_dance;
+        
+        let danceText, energyText, danceEnergyText;
+        let danceBadge, energyBadge, danceEnergyBadge;
+        
+        // 愉悦度-舞蹈性
+        if (danceCorr > 0.5) {
+            danceText = `呈较强正相关关系（${genreName !== '全部流派' ? genreName + '流派' : '总体数据'}）。说明这个流派的歌曲中，越愉悦的歌通常越适合跳舞。`;
+            danceBadge = '较强正相关';
+        } else if (danceCorr > 0.3) {
+            danceText = `呈中等正相关关系（${genreName !== '全部流派' ? genreName + '流派' : '总体数据'}）。愉悦感和舞蹈性有一定关联。`;
+            danceBadge = '中等正相关';
+        } else if (danceCorr > 0) {
+            danceText = `呈弱正相关关系（${genreName !== '全部流派' ? genreName + '流派' : '总体数据'}）。愉悦度和舞蹈性关系较弱。`;
+            danceBadge = '弱正相关';
+        } else {
+            danceText = `呈负相关关系（${genreName !== '全部流派' ? genreName + '流派' : '总体数据'}）。这个流派的歌曲中，越愉悦的歌反而舞蹈性越低。`;
+            danceBadge = '负相关';
+        }
+        
+        // 愉悦度-能量
+        if (energyCorr > 0.5) {
+            energyText = `呈较强正相关关系。愉悦度和能量高度相关，开心的歌通常也更有能量。`;
+            energyBadge = '较强正相关';
+        } else if (energyCorr > 0.3) {
+            energyText = `呈中等正相关关系。愉悦度和能量有一定关联。`;
+            energyBadge = '中等正相关';
+        } else if (energyCorr > 0) {
+            energyText = `呈弱正相关关系。愉悦度和能量相对独立，可以出现高能量但低愉悦度的歌曲。`;
+            energyBadge = '弱正相关';
+        } else {
+            energyText = `呈负相关关系。这个流派的歌曲中，越愉悦的歌能量反而越低。`;
+            energyBadge = '负相关';
+        }
+        
+        // 能量-舞蹈性
+        if (danceEnergyCorr > 0.5) {
+            danceEnergyText = `呈较强正相关关系。能量越高的歌舞蹈性越强。`;
+            danceEnergyBadge = '较强正相关';
+        } else if (danceEnergyCorr > 0.3) {
+            danceEnergyText = `呈中等正相关关系。能量和舞蹈性有一定关联。`;
+            danceEnergyBadge = '中等正相关';
+        } else if (danceEnergyCorr > 0) {
+            danceEnergyText = `呈弱正相关关系。能量高低不代表舞蹈性的强弱，高能量的重金属摇滚往往舞蹈性较低。`;
+            danceEnergyBadge = '极弱相关';
+        } else {
+            danceEnergyText = `呈负相关关系。这个流派的歌曲中，能量越高的歌舞蹈性反而越低。`;
+            danceEnergyBadge = '负相关';
+        }
+        
+        document.getElementById(prefix + '-interpretation-dance').innerHTML = danceText;
+        document.getElementById(prefix + '-interpretation-energy').innerHTML = energyText;
+        document.getElementById(prefix + '-interpretation-energy-dance').innerHTML = danceEnergyText;
+        
+        document.getElementById(prefix + '-badge-dance').innerHTML = danceBadge;
+        document.getElementById(prefix + '-badge-energy').innerHTML = energyBadge;
+        document.getElementById(prefix + '-badge-energy-dance').innerHTML = danceEnergyBadge;
+    }
+
+    // 绘制热力图
+    function drawHeatmap(heatData = null) {
+        const dataToUse = heatData || overallHeatmapData?.data || [
+            { x: "valence", y: "valence", value: 1.0 },
+            { x: "energy", y: "valence", value: 0.259 },
+            { x: "danceability", y: "valence", value: 0.477 },
+            { x: "valence", y: "energy", value: 0.259 },
+            { x: "energy", y: "energy", value: 1.0 },
+            { x: "danceability", y: "energy", value: 0.134 },
+            { x: "valence", y: "danceability", value: 0.477 },
+            { x: "energy", y: "danceability", value: 0.134 },
+            { x: "danceability", y: "danceability", value: 1.0 }
+        ];
+        
+        const seriesData = dataToUse.map(item => [item.x, item.y, item.value]);
+        
+        const option = {
+    tooltip: {
+        trigger: 'item',
+        formatter: function(params) {
+            return `<div style="padding: 10px 14px; background: rgba(0,0,0,0.85); border-radius: 10px;">
+                    <strong style="color: #fff; font-size: 14px;">${params.data[0]} ↔ ${params.data[1]}</strong><br/>
+                    <span style="color: rgba(255,255,255,0.7); font-size: 12px;">相关系数:</span>
+                    <span style="font-size:18px;font-weight:bold;color:#4ecdc4;"> ${params.data[2].toFixed(3)}</span>
+                    </div>`;
+        },
+        backgroundColor: 'transparent',
+        borderWidth: 0,
+        padding: 0
+    },
+    xAxis: {
+        type: 'category',
+        data: ["valence", "energy", "danceability"],
+        name: '音频特征',
+        nameLocation: 'middle',
+        nameGap: 50,
+        nameTextStyle: { color: '#4a5568', fontSize: 16,fontFamily: 'Inter, "Noto Sans SC", "Microsoft YaHei", sans-serif',  // 自定义字体
+    fontWeight: 'bold' },      // 深灰
+        axisLabel: {
+            fontSize: 14,
+            fontWeight: '600',
+            color: '#2d3748',                                  // 深灰
+            formatter: function(value) {
+                const names = { 'valence': '✨ 愉悦度', 'energy': '⚡ 能量', 'danceability': '🎵 舞蹈性' };
+                return names[value] || value;
+            }
+        },
+        axisLine: { lineStyle: { color: 'rgba(0,0,0,0.2)' } }, // 轴线改为半透明深色
+        axisTick: { show: false }
+    },
+    yAxis: {
+        type: 'category',
+        data: ["valence", "energy", "danceability"],
+        name: '音频特征',
+        nameLocation: 'middle',
+        nameGap: 70,
+        nameTextStyle: { color: '#4a5568', fontSize: 16 ,fontFamily: 'Inter, "Noto Sans SC", "Microsoft YaHei", sans-serif',  // 自定义字体
+    fontWeight: 'bold'},      // 深灰
+        axisLabel: {
+            fontSize: 14,
+            fontWeight: '600',
+            color: '#2d3748',                                  // 深灰
+            formatter: function(value) {
+                const names = { 'valence': '✨ 愉悦度', 'energy': '⚡ 能量', 'danceability': '🎵 舞蹈性' };
+                return names[value] || value;
+            }
+        },
+        axisLine: { lineStyle: { color: 'rgba(0,0,0,0.2)' } }, // 轴线改为半透明深色
+        axisTick: { show: false }
+    },
+    visualMap: {
+        min: -1,
+        max: 1,
+        calculable: true,
+        orient: 'vertical',
+        right: 30,
+        top: 'center',
+        inRange: { color: ['#4ecdc4', '#1a1a2e', '#ff6b6b'] },
+        text: ['正相关 ↑', '负相关 ↓'],
+        textStyle: { color: '#4a5568', fontSize: 15,fontFamily: 'Inter, "Noto Sans SC", "Microsoft YaHei", sans-serif',  // 自定义字体
+    fontWeight: 'bold' },          // 深灰
+        itemWidth: 12,
+        itemHeight: 100,
+        borderWidth: 0,
+        backgroundColor: 'rgba(255,255,255,0.05)'
+    },
+    series: [{
+        type: 'heatmap',
+        data: seriesData,
+        label: {
+            show: true,
+            formatter: (p) => p.data[2].toFixed(2),
+            fontSize: 16,
+            fontWeight: 'bold',
+            color: 'rgba(255,255,255,0.95)'                     // 保持不变（彩色背景上需要白色）
+        },
+        itemStyle: {
+            borderRadius: 12,
+            borderColor: 'rgba(255,255,255,0.1)',
+            borderWidth: 2
+        },
+        emphasis: {
+            itemStyle: {
+                shadowBlur: 20,
+                shadowColor: 'rgba(102, 126, 234, 0.5)'
+            }
+        }
+    }],
+    backgroundColor: 'transparent'
+};
+        
+        if (currentHeatmapChart) {
+            currentHeatmapChart.setOption(option);
+        } else {
+            currentHeatmapChart = echarts.init(document.getElementById('heatmap'));
+            currentHeatmapChart.setOption(option);
+        }
+    }
+
+    function updateHeatmapChart(newData) {
+        const seriesData = newData.map(item => [item.x, item.y, item.value]);
+        currentHeatmapChart.setOption({
+            series: [{ data: seriesData }]
+        });
+    }
+
+    // ========== 3D 散点图相关 ==========
+    function loadRealData() {
+        return fetch('scatter3d_data.json')
+            .then(response => {
+                if (!response.ok) throw new Error('scatter3d_data.json 文件不存在');
+                return response.json();
+            })
+            .then(data => {
+                console.log(' 加载真实数据成功，共', data.length, '个点');
+                original3dData = data;
+                currentDisplayData = data;
+                
+                const genres = [...new Set(data.map(d => d[3]))];
+                genres.forEach(genre => {
+                    genreColors[genre] = getColorForGenre(genre);
+                });
+                console.log(' 共', genres.length, '种流派');
+                
+                const select = document.getElementById('genre-filter');
+                if (select) {
+                    while (select.options.length > 1) select.remove(1);
+                    genres.sort().forEach(genre => {
+                        const option = document.createElement('option');
+                        option.value = genre;
+                        option.textContent = genre;
+                        select.appendChild(option);
+                    });
+                    
+                    select.onchange = function(e) {
+                        const selectedGenre = e.target.value;
+                        if (selectedGenre === 'all') {
+                            currentDisplayData = original3dData;
+                        } else {
+                            currentDisplayData = original3dData.filter(d => d[3] === selectedGenre);
+                        }
+                        updateScatter3d();
+                        updateConclusionByGenre(selectedGenre);
+                        console.log(` 筛选流派: ${selectedGenre}, 显示 ${currentDisplayData.length} 个点`);
+                    };
+                }
+                return true;
+            })
+            .catch(error => {
+                console.error(' 加载真实数据失败:', error);
+                document.getElementById('scatter3d').innerHTML = `
+                    <div style="display:flex;align-items:center;justify-content:center;height:100%;">
+                        <div style="text-align:center;color:rgba(255,255,255,0.5);">
+                            <p style="font-size:18px;margin-bottom:8px;"> 加载数据失败</p>
+                            <p style="font-size:13px;">请确保 scatter3d_data.json 文件存在</p>
+                        </div>
+                    </div>
+                `;
+                return false;
+            });
+    }
+
+    function updateScatter3d() {
+        if (!scatter3dChart || !currentDisplayData) return;
+        scatter3dChart.setOption({ series: [{ data: currentDisplayData }] });
+    }
+
+    function updateConclusionByGenre(genre) {
+        let corrData;
+        let genreNameForDisplay = '';
+        
+        if (genre === 'all') {
+            corrData = {
+                valence_energy: 0.259,
+                valence_dance: 0.477,
+                energy_dance: 0.134
+            };
+            genreNameForDisplay = '全部流派';
+        } else {
+            const genreCorr = genreHeatmaps[genre];
+            if (!genreCorr) {
+                console.warn('该流派数据不足');
+                return;
+            }
+            corrData = {
+                valence_energy: genreCorr.valence_energy,
+                valence_dance: genreCorr.valence_danceability,
+                energy_dance: genreCorr.energy_danceability
+            };
+            genreNameForDisplay = genre;
+        }
+        
+        const valDanceEl = document.getElementById('scatter3d-corr-val-dance');
+        const valEnergyEl = document.getElementById('scatter3d-corr-val-energy');
+        const energyDanceEl = document.getElementById('scatter3d-corr-energy-dance');
+        
+        valDanceEl.innerHTML = corrData.valence_dance.toFixed(3);
+        valDanceEl.className = 'corr-value ' + getCorrClass(corrData.valence_dance);
+        
+        valEnergyEl.innerHTML = corrData.valence_energy.toFixed(3);
+        valEnergyEl.className = 'corr-value ' + getCorrClass(corrData.valence_energy);
+        
+        energyDanceEl.innerHTML = corrData.energy_dance.toFixed(3);
+        energyDanceEl.className = 'corr-value ' + getCorrClass(corrData.energy_dance);
+        
+        updateConclusionText(corrData, genreNameForDisplay, 'scatter3d');
+    }
+    
+    function drawScatter3d() {
+        if (!currentDisplayData || currentDisplayData.length === 0) {
+            document.getElementById('scatter3d').innerHTML = `
+                <div style="display:flex;align-items:center;justify-content:center;height:100%;">
+                    <div style="text-align:center;color:rgba(255,255,255,0.5);">
+                        <p style="font-size:18px;margin-bottom:8px;"> 加载数据中...</p>
+                        <p style="font-size:13px;">请确保 scatter3d_data.json 文件存在</p>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+        
+        const option = {
+            tooltip: {
+                formatter: function(params) {
+                    if (params.data && params.data.length >= 4) {
+                        return `<div style="padding: 12px 16px; background: rgba(0,0,0,0.9); border-radius: 10px;">
+                                <p style="color: #fff; font-weight: 600; margin-bottom: 8px;"> ${params.data[3]}</p>
+                                <p style="color: rgba(255,255,255,0.8); font-size: 12px;">
+                                 愉悦度: <span style="color: #4ecdc4;">${params.data[0].toFixed(3)}</span><br/>
+                                ⚡ 能量: <span style="color: #f39c12;">${params.data[1].toFixed(3)}</span><br/>
+                                 舞蹈性: <span style="color: #96CEB4;">${params.data[2].toFixed(3)}</span>
+                                </p>
+                                </div>`;
+                    }
+                    return '';
+                },
+                backgroundColor: 'transparent',
+                borderWidth: 0,
+                padding: 0
+            },
+            xAxis3D: { 
+        name: '✨ 愉悦度', min: 0, max: 1,
+        nameTextStyle: { color: '#4a5568', fontSize: 15,fontFamily: 'Inter, "Noto Sans SC", "Microsoft YaHei", sans-serif',  // 自定义字体
+    fontWeight: 'bold' },
+        axisLabel: { color: '#2d3748', fontSize: 11 },
+        axisLine: { lineStyle: { color: 'rgba(0,0,0,0.2)' } }
+    },
+    yAxis3D: {
+        name: '⚡ 能量', min: 0, max: 1,
+        nameTextStyle: { color: '#4a5568', fontSize: 15,fontFamily: 'Inter, "Noto Sans SC", "Microsoft YaHei", sans-serif',  // 自定义字体
+    fontWeight: 'bold' },
+        axisLabel: { color: '#2d3748', fontSize: 11 },
+        axisLine: { lineStyle: { color: 'rgba(0,0,0,0.2)' } }
+    },
+    zAxis3D: {
+        name: '🎵 舞蹈性', min: 0, max: 1,
+        nameTextStyle: { color: '#4a5568', fontSize: 15,fontFamily: 'Inter, "Noto Sans SC", "Microsoft YaHei", sans-serif',  // 自定义字体
+    fontWeight: 'bold'},
+        axisLabel: { color: '#2d3748', fontSize: 11 },
+        axisLine: { lineStyle: { color: 'rgba(0,0,0,0.2)' } }
+    },
+            grid3D: {
+                viewControl: { distance: 280, alpha: 35, beta: 45, rotateSensitivity: 1, zoomSensitivity: 1 },
+                boxWidth: 120, boxHeight: 120, boxDepth: 120,
+                light: { main: { intensity: 1.2, shadow: true }, ambient: { intensity: 0.5 } },
+                boxStyle: { color: 'rgba(255,255,255,0.03)', opacity: 0.5 }
+            },
+            series: [{
+                type: 'scatter3D',
+                data: currentDisplayData,
+                symbolSize: 4,
+                itemStyle: { color: (p) => genreColors[p.data[3]] || '#888', opacity: 0.7 },
+                emphasis: { 
+                    label: { show: true, formatter: (p) => p.data[3], position: 'top',
+                        textStyle: { fontSize: 11, backgroundColor: 'rgba(0,0,0,0.8)', padding: [4, 8], borderRadius: 6, color: '#fff' }
+                    },
+                    itemStyle: { borderWidth: 2, borderColor: 'rgba(255,255,255,0.8)' }
+                }
+            }],
+            backgroundColor: 'transparent'
+        };
+        
+        scatter3dChart = echarts.init(document.getElementById('scatter3d'));
+        scatter3dChart.setOption(option);
+        console.log(` 3D图渲染完成，共 ${currentDisplayData.length} 个点`);
+    }
+
+    // ========== 切换图表 ==========
+    function switchChart(type, trigger = null) {
+        const btns = document.querySelectorAll('.tab-btn');
+        btns.forEach(btn => btn.classList.remove('active'));
+        const activeButton = trigger || document.querySelector(`.tab-btn[onclick*="${type}"]`);
+        if (activeButton) activeButton.classList.add('active');
+        
+        document.getElementById('heatmap-chart').classList.remove('active');
+        document.getElementById('scatter3d-chart').classList.remove('active');
+        document.getElementById('heatmap-filter-bar').style.display = 'none';
+        document.getElementById('scatter3d-filter-bar').style.display = 'none';
+        document.getElementById('heatmap-conclusion-card').style.display = 'none';
+        document.getElementById('scatter3d-conclusion-card').style.display = 'none';
+        
+        if (type === 'heatmap') {
+            document.getElementById('heatmap-chart').classList.add('active');
+            document.getElementById('heatmap-filter-bar').style.display = 'flex';
+            document.getElementById('heatmap-conclusion-card').style.display = 'block';
+            setTimeout(() => currentHeatmapChart?.resize(), 100);
+        } else {
+            document.getElementById('scatter3d-chart').classList.add('active');
+            document.getElementById('scatter3d-filter-bar').style.display = 'flex';
+            document.getElementById('scatter3d-conclusion-card').style.display = 'block';
+            setTimeout(() => scatter3dChart?.resize(), 100);
+        }
+    }
+
+    // ========== 页面加载 ==========
+    /*window.onload = () => {
+        Promise.all([
+            loadOverallHeatmap(),
+            loadGenreHeatmaps(),
+            loadRealData()
+        ]).then(() => {
+            drawHeatmap();
+            drawScatter3d();
+        });
+    };*/
+    // 生成动态波浪条（黑胶唱片右侧动画）
+const waveBarsContainer = document.getElementById('wave-bars');
+if (waveBarsContainer) {
+    waveBarsContainer.innerHTML = Array.from({ length: 24 }, (_, i) => `<i style="--level:${18 + ((i * 17) % 58)}"></i>`).join("");
+}
+    window.onload = () => {
+    Promise.all([
+        loadOverallHeatmap(),
+        loadGenreHeatmaps(),
+        loadRealData()
+    ]).then(() => {
+        drawHeatmap();
+        drawScatter3d();
+
+        // 更新顶部统计卡片
+        // 歌曲总量：从 original3dData 获取（或者从 loadRealData 中已设置）
+        if (original3dData) {
+            document.getElementById('totalSongsCount').innerText = original3dData.length.toLocaleString();
+        } else {
+            // 如果 original3dData 尚未就绪，从真实数据加载后再更新，但此时已就绪
+            fetch('scatter3d_data.json')
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('totalSongsCount').innerText = data.length.toLocaleString();
+                })
+                .catch(() => document.getElementById('totalSongsCount').innerText = '114,000');
+        }
+
+        // 流派总数：从 genreHeatmaps 的键数量获取
+        const genreCount = Object.keys(genreHeatmaps).length;
+        if (genreCount > 0) {
+            document.getElementById('totalGenresCount').innerText = genreCount;
+        } else {
+            // 若没有流派数据，尝试从 original3dData 中提取唯一流派
+            if (original3dData) {
+                const uniqueGenres = [...new Set(original3dData.map(d => d[3]))];
+                document.getElementById('totalGenresCount').innerText = uniqueGenres.length;
+            } else {
+                document.getElementById('totalGenresCount').innerText = '125';
+            }
+        }
+    });
+};
+    </script>
+    <script src="../shared/nav.js"></script>
+    <script src="../shared/ui.js"></script>
+</body>
+</html>

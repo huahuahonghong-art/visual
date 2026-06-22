@@ -1,0 +1,866 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>模块二：歌曲流行度影响因素分析</title>
+    <style>
+:root {
+  color: #172033;
+  background: #f4ead7;
+  font-family:
+    Inter, "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", Arial,
+    sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background:
+    radial-gradient(circle at 18% 19%, transparent 0 72px, rgba(78, 49, 24, 0.13) 73px 76px, transparent 77px),
+    radial-gradient(circle at 27% 55%, transparent 0 92px, rgba(78, 49, 24, 0.1) 93px 96px, transparent 97px),
+    radial-gradient(circle at 12% 77%, transparent 0 52px, rgba(78, 49, 24, 0.11) 53px 56px, transparent 57px),
+    linear-gradient(110deg, rgba(221, 184, 78, 0.34) 0 42%, rgba(244, 234, 215, 0.92) 42.1% 69%, rgba(151, 50, 61, 0.3) 69.1% 100%),
+    #f4ead7;
+  background-attachment: fixed;
+}
+
+body::before {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    linear-gradient(110deg, transparent 0 32%, rgba(71, 36, 12, 0.09) 32.1% 32.35%, transparent 32.5%),
+    linear-gradient(78deg, transparent 0 18%, rgba(71, 36, 12, 0.08) 18.1% 18.3%, transparent 18.45%),
+    radial-gradient(circle at 42% 23%, rgba(255, 255, 255, 0.24), transparent 24%),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 4px);
+  content: "";
+}
+
+body::after {
+  position: fixed;
+  left: 4%;
+  bottom: -120px;
+  z-index: -1;
+  width: 520px;
+  height: 520px;
+  pointer-events: none;
+  border: 5px solid rgba(73, 38, 11, 0.11);
+  border-radius: 46% 54% 48% 52%;
+  box-shadow:
+    96px -88px 0 -62px rgba(73, 38, 11, 0.11),
+    180px -14px 0 -48px rgba(73, 38, 11, 0.09),
+    264px -118px 0 -70px rgba(73, 38, 11, 0.1);
+  content: "";
+  transform: rotate(-18deg);
+}
+
+button,
+select {
+  font: inherit;
+}
+
+.module2-page {
+  width: min(1440px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 34px 0 52px;
+}
+
+.hero-band {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 390px;
+  align-items: center;
+  gap: 34px;
+  padding: 34px 36px;
+  border: 2px solid rgba(24, 32, 51, 0.12);
+  border-radius: 22px;
+  background:
+    linear-gradient(100deg, rgba(255, 250, 237, 0.94) 0 56%, rgba(239, 221, 192, 0.9) 56% 100%);
+  box-shadow: 0 22px 46px rgba(74, 30, 14, 0.13);
+  overflow: hidden;
+}
+
+.hero-band::after {
+  position: absolute;
+  right: 270px;
+  top: 24px;
+  width: 2px;
+  height: 190px;
+  background: linear-gradient(180deg, transparent, rgba(24, 32, 51, 0.16), transparent);
+  content: "";
+}
+
+.eyebrow {
+  margin: 0 0 10px;
+  color: #97323d;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+h1,
+h2 {
+  margin: 0;
+  letter-spacing: 0;
+}
+
+h1 {
+  max-width: 900px;
+  color: #111c2f;
+  font-size: 44px;
+  line-height: 1.18;
+}
+
+h2 {
+  color: #111c2f;
+  font-size: 26px;
+}
+
+.hero-copy {
+  max-width: 780px;
+  margin: 16px 0 0;
+  color: #4f3d39;
+  font-size: 17px;
+  line-height: 1.75;
+}
+
+.music-visual {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 210px;
+}
+
+.vinyl-disc {
+  position: relative;
+  width: 238px;
+  height: 150px;
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 34% 48%, #d7aa3c 0 14px, #111827 15px 27px, transparent 28px),
+    radial-gradient(circle at 66% 48%, #97323d 0 14px, #111827 15px 27px, transparent 28px),
+    linear-gradient(0deg, transparent 0 28px, rgba(255, 255, 255, 0.88) 29px 86px, transparent 87px),
+    repeating-linear-gradient(0deg, #111827 0 5px, #1c2434 6px 8px);
+  box-shadow: 0 24px 38px rgba(32, 16, 16, 0.32);
+  transform: rotate(-10deg);
+}
+
+.vinyl-disc::before {
+  position: absolute;
+  left: 28px;
+  right: 28px;
+  top: 22px;
+  height: 16px;
+  border-radius: 4px;
+  background: #111827;
+  box-shadow:
+    34px 0 0 #111827,
+    68px 0 0 #111827,
+    102px 0 0 #111827,
+    136px 0 0 #111827;
+  content: "";
+}
+
+.vinyl-disc span {
+  position: absolute;
+  left: 46px;
+  bottom: 18px;
+  width: 146px;
+  height: 28px;
+  border: 2px solid rgba(17, 24, 39, 0.28);
+  border-radius: 3px;
+  background: #fffaf1;
+  transform: none;
+  box-shadow: none;
+}
+
+.vinyl-disc span::after {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  top: 8px;
+  height: 2px;
+  background: rgba(17, 24, 39, 0.22);
+  box-shadow: 0 8px 0 rgba(17, 24, 39, 0.22);
+  content: "";
+}
+
+.wave-bars {
+  position: absolute;
+  right: 0;
+  bottom: 8px;
+  display: flex;
+  align-items: end;
+  gap: 5px;
+  height: 92px;
+  padding: 12px 14px;
+  border: 2px solid rgba(24, 32, 51, 0.12);
+  border-radius: 14px;
+  background: rgba(255, 250, 237, 0.68);
+  backdrop-filter: blur(10px);
+}
+
+.wave-bars i {
+  display: block;
+  width: 5px;
+  height: calc(var(--level) * 1px);
+  border-radius: 999px;
+  background: linear-gradient(180deg, #446a8f, #1f8f7a);
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1.4fr;
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.metric-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 96px;
+  padding: 16px 18px;
+  overflow: hidden;
+  border: 2px solid rgba(24, 32, 51, 0.08);
+  border-radius: 14px;
+  background: rgba(255, 250, 237, 0.82);
+  box-shadow: 0 12px 26px rgba(74, 30, 14, 0.1);
+  backdrop-filter: blur(14px);
+}
+
+.metric-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  height: 42px;
+  min-width: 42px;
+  padding: 0 9px;
+  border-radius: 12px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #97323d, #d7aa3c);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.metric-card p {
+  margin: 0 0 4px;
+  color: #6a7a8f;
+  font-size: 14px;
+}
+
+.metric-card strong {
+  display: block;
+  color: #111c2f;
+  font-size: 25px;
+  line-height: 1.16;
+}
+
+.metric-card small {
+  display: block;
+  margin-top: 5px;
+  color: #607085;
+  line-height: 1.45;
+}
+
+.metric-card-wide strong {
+  font-size: 21px;
+}
+
+.analysis-workbench {
+  padding: 24px;
+  border: 2px solid rgba(24, 32, 51, 0.1);
+  border-radius: 18px;
+  background: rgba(255, 250, 237, 0.88);
+  box-shadow: 0 18px 42px rgba(74, 30, 14, 0.12);
+}
+
+.workbench-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 18px;
+}
+
+.workbench-heading > p {
+  max-width: 520px;
+  margin: 6px 0 0;
+  color: #607085;
+  line-height: 1.65;
+}
+
+.tab-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.tab-card {
+  min-height: 116px;
+  padding: 16px;
+  border: 2px solid rgba(24, 32, 51, 0.1);
+  border-radius: 10px;
+  color: #172033;
+  background: #fffaf0;
+  box-shadow: 0 10px 20px rgba(74, 30, 14, 0.08);
+  cursor: pointer;
+  text-align: left;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+.tab-card:hover,
+.tab-card.active {
+  border-color: rgba(151, 50, 61, 0.42);
+  box-shadow: 0 16px 28px rgba(151, 50, 61, 0.13);
+  transform: translateY(-2px);
+}
+
+.tab-card.active {
+  background: linear-gradient(135deg, #ead18a 0%, #fff7df 48%, #f0ddd8 100%);
+}
+
+.tab-card span,
+.active-panel-head span {
+  color: #97323d;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.tab-card strong {
+  display: block;
+  margin: 9px 0 8px;
+  color: #111c2f;
+  font-size: 18px;
+  line-height: 1.25;
+}
+
+.tab-card small {
+  display: none;
+  color: #607085;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.viz-panel {
+  padding: 18px;
+  border: 2px solid rgba(24, 32, 51, 0.1);
+  border-radius: 16px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 248, 229, 0.96));
+  box-shadow: 0 18px 36px rgba(74, 30, 14, 0.14);
+}
+
+.active-panel-head {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.35fr) 1fr;
+  gap: 18px;
+  margin-bottom: 6px;
+  padding: 2px 4px 14px;
+  border-bottom: 1px solid rgba(24, 32, 51, 0.12);
+}
+
+.active-panel-head h3 {
+  margin: 6px 0 0;
+  color: #172033;
+  font-size: 24px;
+}
+
+.active-panel-head p {
+  margin: 0;
+  color: #4f3d39;
+  line-height: 1.7;
+}
+
+.chart-surface {
+  width: 100%;
+}
+
+.evidence-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 12px 4px 8px;
+}
+
+.evidence-item {
+  padding: 14px 16px;
+  border: 1px solid rgba(24, 32, 51, 0.1);
+  border-radius: 12px;
+  background: rgba(255, 250, 237, 0.78);
+}
+
+.evidence-item span {
+  display: block;
+  color: #97323d;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.evidence-item strong {
+  display: block;
+  margin-top: 5px;
+  color: #172033;
+  font-size: 20px;
+}
+
+.evidence-item small {
+  display: block;
+  margin-top: 4px;
+  color: #5c6678;
+}
+
+.chart-pair {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  gap: 16px;
+}
+
+.inline-insight {
+  margin: 4px 4px 8px;
+  padding: 10px 12px;
+  border: 1px solid rgba(151, 50, 61, 0.14);
+  border-radius: 10px;
+  color: #4f3d39;
+  background: rgba(151, 50, 61, 0.06);
+  line-height: 1.65;
+}
+
+.insight {
+  margin: 10px 4px 0;
+  padding: 12px 14px;
+  border-left: 3px solid #97323d;
+  border-radius: 0 8px 8px 0;
+  color: #4f3d39;
+  background: rgba(151, 50, 61, 0.07);
+  line-height: 1.65;
+}
+
+.panel-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 0 2px 10px;
+}
+
+.panel-toolbar label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #4f3d39;
+  font-size: 14px;
+}
+
+.panel-toolbar select {
+  min-width: 158px;
+  height: 36px;
+  border: 1px solid rgba(24, 32, 51, 0.18);
+  border-radius: 8px;
+  color: #172033;
+  background: #fffaf0;
+  outline: none;
+}
+
+.filtered-count {
+  min-width: 130px;
+  color: #97323d;
+  font-weight: 700;
+  text-align: right;
+}
+
+.conclusion-band {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 24px;
+  margin-top: 22px;
+  padding: 28px;
+  border: 2px solid rgba(24, 32, 51, 0.1);
+  border-radius: 12px;
+  background: rgba(255, 250, 237, 0.9);
+  box-shadow: 0 14px 34px rgba(74, 30, 14, 0.12);
+}
+
+.conclusion-band ol {
+  margin: 0;
+  padding-left: 22px;
+  color: #354258;
+  line-height: 1.82;
+}
+
+.conclusion-band li + li {
+  margin-top: 8px;
+}
+
+.next-step-band {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 22px;
+  align-items: center;
+  margin-top: 22px;
+  padding: 24px 28px;
+  border: 2px solid rgba(151, 50, 61, 0.18);
+  border-radius: 12px;
+  background:
+    linear-gradient(135deg, rgba(255, 250, 237, 0.95), rgba(240, 221, 216, 0.88));
+  box-shadow: 0 14px 34px rgba(74, 30, 14, 0.1);
+}
+
+.next-step-band p {
+  margin: 0;
+  color: #354258;
+  line-height: 1.72;
+}
+
+.next-step-band h2 {
+  margin-bottom: 8px;
+}
+
+.next-step-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 190px;
+  min-height: 48px;
+  padding: 0 18px;
+  border-radius: 10px;
+  color: #fffaf0;
+  font-weight: 800;
+  text-decoration: none;
+  background: linear-gradient(135deg, #97323d, #d0a735);
+  box-shadow: 0 12px 24px rgba(151, 50, 61, 0.18);
+}
+
+.next-step-link:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 28px rgba(151, 50, 61, 0.22);
+}
+
+@media (max-width: 1080px) {
+  .module2-page {
+    width: min(100% - 28px, 980px);
+  }
+
+  .hero-band,
+  .next-step-band,
+  .conclusion-band {
+    grid-template-columns: 1fr;
+  }
+
+  .music-visual {
+    min-height: 170px;
+  }
+
+  .metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tab-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .workbench-heading,
+  .active-panel-head {
+    grid-template-columns: 1fr;
+    flex-direction: column;
+  }
+
+  .chart-pair,
+  .evidence-strip {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 680px) {
+  h1 {
+    font-size: 30px;
+  }
+
+  .module2-page {
+    width: min(100% - 20px, 640px);
+    padding-top: 20px;
+  }
+
+  .metric-card strong {
+    font-size: 25px;
+  }
+
+  .metric-grid,
+  .tab-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .metric-card {
+    min-height: 84px;
+  }
+
+  .analysis-workbench,
+  .hero-band,
+  .next-step-band,
+  .conclusion-band {
+    padding: 18px;
+  }
+
+  .next-step-link {
+    width: 100%;
+  }
+
+  .viz-panel {
+    padding: 12px;
+  }
+
+  .panel-toolbar {
+    justify-content: stretch;
+  }
+
+  .panel-toolbar label,
+  .panel-toolbar select,
+  .filtered-count {
+    width: 100%;
+  }
+
+  .filtered-count {
+    text-align: left;
+  }
+}
+
+    </style>
+      <link rel="stylesheet" href="../shared/theme.css">
+</head>
+  <body>
+    <main class="module2-page">
+      <section class="hero-band">
+        <div>
+          <p class="eyebrow">Spotify 音频特征研究</p>
+          <h1>模块二：歌曲流行度影响因素分析</h1>
+          <p class="hero-copy">
+            本模块以流行度为目标变量，分析音频特征与歌曲流行度之间的相关关系和分组差异。
+          </p>
+        </div>
+        <div class="music-visual" aria-hidden="true">
+          <div class="vinyl-disc"><span></span></div>
+          <div class="wave-bars" id="wave-bars"></div>
+        </div>
+      </section>
+
+      <section class="metric-grid">
+        <article class="metric-card">
+          <span class="metric-icon">N</span>
+          <div><p>去重后歌曲数</p><strong id="total-tracks">-</strong></div>
+        </article>
+        <article class="metric-card">
+          <span class="metric-icon">μ</span>
+          <div><p>平均流行度</p><strong id="avg-popularity">-</strong></div>
+        </article>
+        <article class="metric-card">
+          <span class="metric-icon">%</span>
+          <div><p>热门歌曲占比</p><strong id="popular-ratio">-</strong></div>
+        </article>
+        <article class="metric-card metric-card-wide">
+          <span class="metric-icon">峰</span>
+          <div>
+            <p>最高流行度歌曲</p>
+            <strong id="top-track">-</strong>
+            <small id="top-track-meta">-</small>
+          </div>
+        </article>
+      </section>
+
+      <section class="analysis-workbench">
+        <div class="workbench-heading">
+          <div>
+            <p class="eyebrow">交互式分析视图</p>
+            <h2>分析视图</h2>
+          </div>
+          <p>选择不同视图，逐步观察歌曲流行度的总体结构、相关方向、群体差异和分组分布。</p>
+        </div>
+        <div class="tab-grid" id="chart-tabs" role="tablist" aria-label="模块二图表选项卡"></div>
+        <article class="viz-panel active-panel">
+          <div class="active-panel-head">
+            <div><span id="panel-kicker"></span><h3 id="panel-title"></h3></div>
+            <p id="panel-insight"></p>
+          </div>
+          <div id="panel-extra"></div>
+          <div id="chart-area"></div>
+        </article>
+      </section>
+
+      <section class="next-step-band">
+        <div>
+          <p class="eyebrow">下一步研究问题</p>
+          <h2>从流行度影响走向特征关联</h2>
+          <p>
+            模块二将流行度作为核心问题，观察它与歌曲音频特征之间的关系。由于单一特征的解释力有限，下一步可以进一步分析这些特征之间是否存在组合关系和内在结构。
+          </p>
+        </div>
+        <a class="next-step-link" href="../module5/module5.html">查看特征内在关联</a>
+      </section>
+
+      <section class="conclusion-band">
+        <div><p class="eyebrow">自动分析结论</p><h2>分析结论</h2></div>
+        <ol id="conclusions"></ol>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js"></script>
+    <script>
+(async function init() {
+const data = await fetch("module2_popularity_analysis.json").then((response) => {
+  if (!response.ok) throw new Error("模块二 JSON 数据读取失败");
+  return response.json();
+});
+
+const levels = ["low", "medium", "high"];
+const levelNames = { low: "低流行度", medium: "中流行度", high: "高流行度" };
+const levelColors = { low: "#446a8f", medium: "#1f8f7a", high: "#b23a48" };
+const featureNames = {
+  danceability: "舞蹈性", energy: "能量", valence: "愉悦度", acousticness: "原声性",
+  instrumentalness: "器乐性", liveness: "现场感", speechiness: "语音性",
+  loudness: "响度", duration_ms: "时长", tempo: "节奏",
+};
+const directionNames = { positive: "正相关", negative: "负相关" };
+const chartText = "#182033";
+const chartMuted = "#627086";
+const chartGrid = "rgba(24, 32, 51, 0.1)";
+
+let activeChart = "distribution";
+let chartInstances = [];
+let resizeFrame = 0;
+
+const fmt = (value, digits = 2) => Number(value).toLocaleString("zh-CN", { maximumFractionDigits: digits, minimumFractionDigits: digits });
+const pct = (value) => `${(Number(value) * 100).toFixed(2)}%`;
+const correlations = [...data.feature_correlations].sort((a, b) => b.abs_correlation - a.abs_correlation);
+const strongest = correlations[0];
+
+function disposeCharts() {
+  chartInstances.forEach((chart) => chart.dispose());
+  chartInstances = [];
+}
+
+function createChart(parent, option, className = "") {
+  const element = document.createElement("div");
+  element.className = `chart-surface ${className}`;
+  element.style.height = "460px";
+  parent.appendChild(element);
+  const chart = echarts.init(element);
+  chart.setOption(option);
+  chartInstances.push(chart);
+}
+
+window.addEventListener("resize", () => {
+  window.cancelAnimationFrame(resizeFrame);
+  resizeFrame = window.requestAnimationFrame(() => chartInstances.forEach((chart) => chart.resize()));
+});
+
+function distributionOption() {
+  const ranges = data.popularity_distribution.map((item) => item.range);
+  const counts = data.popularity_distribution.map((item) => item.count);
+  return {
+    title: { text: "歌曲流行度分布", left: 8, textStyle: { color: chartText, fontSize: 16 } },
+    tooltip: { trigger: "axis", axisPointer: { type: "shadow" } },
+    legend: { right: 12, textStyle: { color: chartMuted } },
+    grid: { left: 66, right: 54, top: 58, bottom: 64, containLabel: true },
+    xAxis: { type: "category", data: ranges, name: "流行度区间", nameLocation: "middle", nameGap: 34, nameTextStyle: { color: chartMuted }, axisLabel: { color: chartMuted } },
+    yAxis: { type: "value", name: "歌曲数", nameTextStyle: { color: chartMuted }, axisLabel: { color: chartMuted }, splitLine: { lineStyle: { color: chartGrid } } },
+    series: [
+      { name: "歌曲数", type: "bar", barWidth: "58%", data: data.popularity_distribution.map((item) => ({ value: item.count, itemStyle: { color: ["71-80", "81-90", "91-100"].includes(item.range) ? new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: "#d0a735" }, { offset: 1, color: "#a73545" }]) : new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: "#4e9f8f" }, { offset: 1, color: "#446a8f" }]) } })) },
+      { name: "平滑趋势", type: "line", smooth: true, symbolSize: 7, data: counts, lineStyle: { color: "#1d2637", width: 2 }, itemStyle: { color: "#1d2637" } },
+    ],
+  };
+}
+
+function correlationOption() {
+  const rows = correlations;
+  return {
+    title: { text: "音频特征与流行度的相关性", left: 8, textStyle: { color: chartText, fontSize: 16 } },
+    tooltip: { trigger: "item", formatter: ({ data }) => `${featureNames[data.raw.feature]}<br/>相关系数：${data.raw.correlation.toFixed(4)}<br/>方向：${directionNames[data.raw.direction]}` },
+    grid: { left: 132, right: 76, top: 58, bottom: 62, containLabel: true },
+    xAxis: { type: "value", name: "皮尔逊相关系数", nameLocation: "middle", nameGap: 42, min: -0.16, max: 0.1, nameTextStyle: { color: chartMuted }, axisLabel: { color: chartMuted }, splitLine: { lineStyle: { color: chartGrid } } },
+    yAxis: { type: "category", data: rows.map((item) => featureNames[item.feature]).reverse(), axisLabel: { color: chartText }, axisLine: { show: false }, axisTick: { show: false } },
+    series: [{ type: "custom", data: rows.map((item, index) => ({ value: [item.correlation, rows.length - 1 - index, item.abs_correlation], raw: item })).reverse(),
+      renderItem: (_, api) => { const value = api.value(0); const y = api.coord([0, api.value(1)])[1]; const zero = api.coord([0, api.value(1)])[0]; const end = api.coord([value, api.value(1)])[0]; const color = value >= 0 ? "#1f8f7a" : "#a73545"; return { type: "group", children: [{ type: "line", shape: { x1: zero, y1: y, x2: end, y2: y }, style: { stroke: color, lineWidth: 3 } }, { type: "circle", shape: { cx: end, cy: y, r: 7 + api.value(2) * 60 }, style: { fill: color, stroke: "#fff8df", lineWidth: 1.5 } }] }; },
+      markLine: { symbol: "none", label: { show: false }, lineStyle: { color: "rgba(24,32,51,.34)", type: "dashed" }, data: [{ xAxis: 0 }] },
+    }],
+  };
+}
+
+function radarOption() {
+  const p = data.popular_profile;
+  return {
+    title: { text: "热门歌曲音频特征画像", left: 8, textStyle: { color: chartText, fontSize: 15 } },
+    tooltip: { trigger: "item" }, legend: { top: 30, left: "center", textStyle: { color: chartMuted } },
+    radar: { center: ["50%", "58%"], radius: "62%", indicator: p.features.map((f) => ({ name: featureNames[f], max: 1 })), axisName: { color: chartText }, splitLine: { lineStyle: { color: "rgba(24,32,51,.16)" } }, splitArea: { areaStyle: { color: ["rgba(208,167,53,.08)", "rgba(167,53,69,.05)"] } } },
+    series: [{ type: "radar", symbolSize: 5, data: [
+      { name: "全部歌曲", value: p.features.map((f) => p.all_tracks_profile[f]), lineStyle: { color: "#446a8f" }, areaStyle: { color: "rgba(68,106,143,.14)" } },
+      { name: "热门歌曲", value: p.features.map((f) => p.popular_tracks_profile[f]), lineStyle: { color: "#d0a735" }, areaStyle: { color: "rgba(208,167,53,.2)" } },
+      { name: "低流行度歌曲", value: p.features.map((f) => p.low_tracks_profile[f]), lineStyle: { color: "#a73545" }, areaStyle: { color: "rgba(167,53,69,.16)" } },
+    ] }],
+  };
+}
+
+function comparisonOption() {
+  const p = data.popular_profile;
+  const rows = p.features.map((feature) => ({ feature, popular: p.popular_tracks_profile[feature], low: p.low_tracks_profile[feature] }));
+  return {
+    title: { text: "热门歌曲与低流行度歌曲的特征对比", left: 8, textStyle: { color: chartText, fontSize: 15 } },
+    tooltip: { trigger: "item", formatter: ({ data: { raw } }) => `${featureNames[raw.feature]}<br/>热门歌曲：${fmt(raw.popular, 3)}<br/>低流行度歌曲：${fmt(raw.low, 3)}<br/>差值：${raw.popular - raw.low >= 0 ? "+" : ""}${(raw.popular - raw.low).toFixed(3)}` },
+    legend: { right: 10, top: 26, data: ["低流行度歌曲", "热门歌曲"], textStyle: { color: chartMuted } },
+    grid: { left: 82, right: 36, top: 68, bottom: 44, containLabel: true },
+    xAxis: { type: "value", min: 0, max: 0.75, name: "平均特征值", nameLocation: "middle", nameGap: 32, axisLabel: { color: chartMuted }, splitLine: { lineStyle: { color: chartGrid } } },
+    yAxis: { type: "category", data: rows.map((item) => featureNames[item.feature]).reverse(), axisLabel: { color: chartText }, axisTick: { show: false }, axisLine: { show: false } },
+    series: [{ type: "custom", data: rows.map((item, index) => ({ value: [item.low, item.popular, rows.length - 1 - index], raw: item })).reverse(), renderItem: (_, api) => { const lowX = api.coord([api.value(0), api.value(2)])[0]; const popularX = api.coord([api.value(1), api.value(2)])[0]; const y = api.coord([0, api.value(2)])[1]; return { type: "group", children: [{ type: "line", shape: { x1: lowX, y1: y, x2: popularX, y2: y }, style: { stroke: "rgba(24,32,51,.28)", lineWidth: 3 } }, { type: "circle", shape: { cx: lowX, cy: y, r: 7 }, style: { fill: "#d0a735", stroke: "#fffaf0", lineWidth: 2 } }, { type: "circle", shape: { cx: popularX, cy: y, r: 7 }, style: { fill: "#a73545", stroke: "#fffaf0", lineWidth: 2 } }] }; } }, { name: "低流行度歌曲", type: "scatter", data: [], itemStyle: { color: "#d0a735" } }, { name: "热门歌曲", type: "scatter", data: [], itemStyle: { color: "#a73545" } }],
+  };
+}
+
+const tabs = [
+  ["distribution", "长尾结构", "流行度分布", "歌曲流行度呈长尾分布，大多数歌曲集中在中低流行度区间，热门歌曲占比较低。"],
+  ["correlation", "弱相关观察", "特征相关性", `器乐性呈最明显负相关，但最大绝对相关系数仅约 ${strongest.abs_correlation.toFixed(3)}，说明单一特征解释力有限。`],
+  ["profile", "群体差异", "热门歌曲画像", "热门歌曲整体表现为更高的舞蹈性、能量和愉悦度，同时器乐性、原声性和现场感更低。"],
+];
+
+function render() {
+  disposeCharts();
+  const tab = tabs.find(([key]) => key === activeChart);
+  document.querySelector("#panel-kicker").textContent = tab[1]; document.querySelector("#panel-title").textContent = tab[2]; document.querySelector("#panel-insight").textContent = tab[3];
+  const extra = document.querySelector("#panel-extra"); const area = document.querySelector("#chart-area"); extra.innerHTML = ""; area.innerHTML = "";
+  if (activeChart === "distribution") createChart(area, distributionOption());
+  if (activeChart === "correlation") { extra.innerHTML = `<div class="evidence-strip">${correlations.slice(0, 3).map((item, index) => `<div class="evidence-item"><span>Top ${index + 1}</span><strong>${featureNames[item.feature]}</strong><small>${directionNames[item.direction]} · r = ${item.correlation.toFixed(3)}</small></div>`).join("")}</div>`; createChart(area, correlationOption()); }
+  if (activeChart === "profile") { area.className = "chart-pair"; createChart(area, radarOption()); createChart(area, comparisonOption()); } else area.className = "";
+}
+
+document.querySelector("#wave-bars").innerHTML = Array.from({ length: 24 }, (_, i) => `<i style="--level:${18 + ((i * 17) % 58)}"></i>`).join("");
+document.querySelector("#total-tracks").textContent = data.summary.total_tracks.toLocaleString("zh-CN");
+document.querySelector("#avg-popularity").textContent = fmt(data.summary.avg_popularity, 1);
+document.querySelector("#popular-ratio").textContent = pct(data.summary.popular_track_ratio);
+document.querySelector("#top-track").textContent = data.summary.top_track.track_name;
+document.querySelector("#top-track-meta").textContent = `${data.summary.top_track.artists} · 流行度 ${data.summary.top_track.popularity}`;
+document.querySelector("#chart-tabs").innerHTML = tabs.map(([key, kicker, label]) => `<button class="tab-card ${key === activeChart ? "active" : ""}" data-key="${key}" role="tab"><span>${kicker}</span><strong>${label}</strong></button>`).join("");
+document.querySelectorAll(".tab-card").forEach((button) => button.onclick = () => { activeChart = button.dataset.key; document.querySelectorAll(".tab-card").forEach((item) => item.classList.toggle("active", item === button)); render(); });
+const p = data.popular_profile; const danceDiff = p.popular_tracks_profile.danceability - p.low_tracks_profile.danceability; const instDiff = p.popular_tracks_profile.instrumentalness - p.low_tracks_profile.instrumentalness;
+document.querySelector("#conclusions").innerHTML = [`数据集中平均流行度为 ${fmt(data.summary.avg_popularity, 1)}，热门歌曲占比仅 ${pct(data.summary.popular_track_ratio)}，整体呈长尾结构。`, `${featureNames[strongest.feature]}与流行度的相关性最明显，相关系数为 ${strongest.correlation.toFixed(4)}。`, `热门歌曲相较低流行度歌曲，舞蹈性平均高 ${danceDiff.toFixed(3)}，器乐性平均低 ${Math.abs(instDiff).toFixed(3)}。`, "单一音频特征的线性相关性整体较弱，流行度还可能受到艺人影响力、发行时间、平台推荐和流派偏好等外部因素共同影响。"].map((item) => `<li>${item}</li>`).join("");
+render();
+})();
+
+    </script>
+      <script src="../shared/nav.js"></script>
+      <script src="../shared/ui.js"></script>
+</body>
+</html>

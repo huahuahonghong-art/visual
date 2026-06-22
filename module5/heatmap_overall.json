@@ -1,0 +1,59 @@
+{
+  "xAxis": [
+    "valence",
+    "energy",
+    "danceability"
+  ],
+  "yAxis": [
+    "valence",
+    "energy",
+    "danceability"
+  ],
+  "data": [
+    {
+      "x": "valence",
+      "y": "valence",
+      "value": 1.0
+    },
+    {
+      "x": "energy",
+      "y": "valence",
+      "value": 0.259
+    },
+    {
+      "x": "danceability",
+      "y": "valence",
+      "value": 0.477
+    },
+    {
+      "x": "valence",
+      "y": "energy",
+      "value": 0.259
+    },
+    {
+      "x": "energy",
+      "y": "energy",
+      "value": 1.0
+    },
+    {
+      "x": "danceability",
+      "y": "energy",
+      "value": 0.134
+    },
+    {
+      "x": "valence",
+      "y": "danceability",
+      "value": 0.477
+    },
+    {
+      "x": "energy",
+      "y": "danceability",
+      "value": 0.134
+    },
+    {
+      "x": "danceability",
+      "y": "danceability",
+      "value": 1.0
+    }
+  ]
+}

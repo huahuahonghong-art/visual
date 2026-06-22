@@ -1,0 +1,572 @@
+{
+  "acoustic": {
+    "valence_energy": 0.488,
+    "valence_danceability": 0.299,
+    "energy_danceability": 0.034
+  },
+  "afrobeat": {
+    "valence_energy": 0.324,
+    "valence_danceability": 0.317,
+    "energy_danceability": 0.019
+  },
+  "alt-rock": {
+    "valence_energy": 0.265,
+    "valence_danceability": 0.496,
+    "energy_danceability": -0.077
+  },
+  "alternative": {
+    "valence_energy": 0.191,
+    "valence_danceability": 0.44,
+    "energy_danceability": -0.22
+  },
+  "ambient": {
+    "valence_energy": 0.338,
+    "valence_danceability": 0.4,
+    "energy_danceability": 0.405
+  },
+  "anime": {
+    "valence_energy": 0.545,
+    "valence_danceability": 0.417,
+    "energy_danceability": 0.049
+  },
+  "black-metal": {
+    "valence_energy": 0.024,
+    "valence_danceability": 0.344,
+    "energy_danceability": -0.042
+  },
+  "bluegrass": {
+    "valence_energy": 0.575,
+    "valence_danceability": 0.214,
+    "energy_danceability": 0.027
+  },
+  "blues": {
+    "valence_energy": 0.294,
+    "valence_danceability": 0.552,
+    "energy_danceability": 0.046
+  },
+  "brazil": {
+    "valence_energy": 0.394,
+    "valence_danceability": 0.52,
+    "energy_danceability": 0.054
+  },
+  "breakbeat": {
+    "valence_energy": 0.105,
+    "valence_danceability": 0.332,
+    "energy_danceability": -0.15
+  },
+  "british": {
+    "valence_energy": 0.518,
+    "valence_danceability": 0.614,
+    "energy_danceability": 0.295
+  },
+  "cantopop": {
+    "valence_energy": 0.394,
+    "valence_danceability": 0.32,
+    "energy_danceability": 0.138
+  },
+  "chicago-house": {
+    "valence_energy": 0.03,
+    "valence_danceability": 0.073,
+    "energy_danceability": -0.172
+  },
+  "children": {
+    "valence_energy": 0.372,
+    "valence_danceability": 0.515,
+    "energy_danceability": 0.14
+  },
+  "chill": {
+    "valence_energy": 0.307,
+    "valence_danceability": 0.437,
+    "energy_danceability": -0.02
+  },
+  "classical": {
+    "valence_energy": 0.385,
+    "valence_danceability": 0.575,
+    "energy_danceability": 0.308
+  },
+  "club": {
+    "valence_energy": 0.089,
+    "valence_danceability": 0.309,
+    "energy_danceability": 0.139
+  },
+  "comedy": {
+    "valence_energy": -0.269,
+    "valence_danceability": 0.439,
+    "energy_danceability": -0.255
+  },
+  "country": {
+    "valence_energy": 0.518,
+    "valence_danceability": 0.527,
+    "energy_danceability": 0.222
+  },
+  "dance": {
+    "valence_energy": 0.262,
+    "valence_danceability": 0.344,
+    "energy_danceability": -0.172
+  },
+  "dancehall": {
+    "valence_energy": 0.289,
+    "valence_danceability": 0.201,
+    "energy_danceability": -0.02
+  },
+  "death-metal": {
+    "valence_energy": -0.082,
+    "valence_danceability": 0.246,
+    "energy_danceability": -0.023
+  },
+  "deep-house": {
+    "valence_energy": 0.159,
+    "valence_danceability": 0.328,
+    "energy_danceability": -0.187
+  },
+  "detroit-techno": {
+    "valence_energy": 0.203,
+    "valence_danceability": 0.163,
+    "energy_danceability": -0.129
+  },
+  "disco": {
+    "valence_energy": 0.35,
+    "valence_danceability": 0.459,
+    "energy_danceability": 0.292
+  },
+  "disney": {
+    "valence_energy": 0.564,
+    "valence_danceability": 0.605,
+    "energy_danceability": 0.323
+  },
+  "drum-and-bass": {
+    "valence_energy": 0.124,
+    "valence_danceability": 0.436,
+    "energy_danceability": -0.206
+  },
+  "dub": {
+    "valence_energy": -0.202,
+    "valence_danceability": 0.666,
+    "energy_danceability": -0.249
+  },
+  "dubstep": {
+    "valence_energy": 0.178,
+    "valence_danceability": 0.385,
+    "energy_danceability": 0.138
+  },
+  "edm": {
+    "valence_energy": 0.086,
+    "valence_danceability": 0.383,
+    "energy_danceability": -0.015
+  },
+  "electro": {
+    "valence_energy": 0.294,
+    "valence_danceability": 0.384,
+    "energy_danceability": 0.062
+  },
+  "electronic": {
+    "valence_energy": 0.18,
+    "valence_danceability": 0.307,
+    "energy_danceability": -0.051
+  },
+  "emo": {
+    "valence_energy": 0.292,
+    "valence_danceability": 0.211,
+    "energy_danceability": -0.412
+  },
+  "folk": {
+    "valence_energy": 0.534,
+    "valence_danceability": 0.407,
+    "energy_danceability": 0.173
+  },
+  "forro": {
+    "valence_energy": 0.226,
+    "valence_danceability": 0.415,
+    "energy_danceability": -0.192
+  },
+  "french": {
+    "valence_energy": 0.39,
+    "valence_danceability": 0.362,
+    "energy_danceability": 0.293
+  },
+  "funk": {
+    "valence_energy": 0.224,
+    "valence_danceability": 0.339,
+    "energy_danceability": 0.136
+  },
+  "garage": {
+    "valence_energy": 0.245,
+    "valence_danceability": 0.246,
+    "energy_danceability": -0.319
+  },
+  "german": {
+    "valence_energy": 0.598,
+    "valence_danceability": 0.642,
+    "energy_danceability": 0.628
+  },
+  "gospel": {
+    "valence_energy": 0.317,
+    "valence_danceability": 0.508,
+    "energy_danceability": 0.119
+  },
+  "goth": {
+    "valence_energy": 0.133,
+    "valence_danceability": 0.477,
+    "energy_danceability": -0.154
+  },
+  "grindcore": {
+    "valence_energy": -0.223,
+    "valence_danceability": 0.291,
+    "energy_danceability": -0.071
+  },
+  "groove": {
+    "valence_energy": 0.137,
+    "valence_danceability": 0.495,
+    "energy_danceability": -0.041
+  },
+  "grunge": {
+    "valence_energy": 0.312,
+    "valence_danceability": 0.334,
+    "energy_danceability": -0.037
+  },
+  "guitar": {
+    "valence_energy": 0.591,
+    "valence_danceability": 0.411,
+    "energy_danceability": 0.18
+  },
+  "happy": {
+    "valence_energy": 0.015,
+    "valence_danceability": 0.297,
+    "energy_danceability": -0.229
+  },
+  "hard-rock": {
+    "valence_energy": 0.179,
+    "valence_danceability": 0.497,
+    "energy_danceability": -0.061
+  },
+  "hardcore": {
+    "valence_energy": -0.247,
+    "valence_danceability": 0.407,
+    "energy_danceability": -0.532
+  },
+  "hardstyle": {
+    "valence_energy": 0.02,
+    "valence_danceability": 0.334,
+    "energy_danceability": -0.072
+  },
+  "heavy-metal": {
+    "valence_energy": 0.079,
+    "valence_danceability": 0.219,
+    "energy_danceability": -0.121
+  },
+  "hip-hop": {
+    "valence_energy": 0.4,
+    "valence_danceability": 0.246,
+    "energy_danceability": -0.044
+  },
+  "honky-tonk": {
+    "valence_energy": 0.55,
+    "valence_danceability": 0.37,
+    "energy_danceability": 0.131
+  },
+  "house": {
+    "valence_energy": 0.171,
+    "valence_danceability": 0.368,
+    "energy_danceability": -0.065
+  },
+  "idm": {
+    "valence_energy": 0.421,
+    "valence_danceability": 0.535,
+    "energy_danceability": 0.465
+  },
+  "indian": {
+    "valence_energy": 0.489,
+    "valence_danceability": 0.449,
+    "energy_danceability": 0.204
+  },
+  "indie-pop": {
+    "valence_energy": 0.408,
+    "valence_danceability": 0.446,
+    "energy_danceability": 0.093
+  },
+  "indie": {
+    "valence_energy": 0.362,
+    "valence_danceability": 0.373,
+    "energy_danceability": -0.015
+  },
+  "industrial": {
+    "valence_energy": 0.167,
+    "valence_danceability": 0.312,
+    "energy_danceability": -0.088
+  },
+  "iranian": {
+    "valence_energy": 0.436,
+    "valence_danceability": 0.475,
+    "energy_danceability": 0.391
+  },
+  "j-dance": {
+    "valence_energy": 0.329,
+    "valence_danceability": 0.256,
+    "energy_danceability": -0.044
+  },
+  "j-idol": {
+    "valence_energy": 0.194,
+    "valence_danceability": 0.46,
+    "energy_danceability": -0.234
+  },
+  "j-pop": {
+    "valence_energy": 0.501,
+    "valence_danceability": 0.437,
+    "energy_danceability": 0.052
+  },
+  "j-rock": {
+    "valence_energy": 0.249,
+    "valence_danceability": 0.437,
+    "energy_danceability": -0.165
+  },
+  "jazz": {
+    "valence_energy": 0.454,
+    "valence_danceability": 0.532,
+    "energy_danceability": 0.356
+  },
+  "k-pop": {
+    "valence_energy": 0.362,
+    "valence_danceability": 0.234,
+    "energy_danceability": 0.205
+  },
+  "kids": {
+    "valence_energy": 0.222,
+    "valence_danceability": 0.142,
+    "energy_danceability": -0.047
+  },
+  "latin": {
+    "valence_energy": 0.455,
+    "valence_danceability": 0.304,
+    "energy_danceability": 0.244
+  },
+  "latino": {
+    "valence_energy": 0.369,
+    "valence_danceability": 0.08,
+    "energy_danceability": -0.012
+  },
+  "malay": {
+    "valence_energy": 0.429,
+    "valence_danceability": 0.449,
+    "energy_danceability": 0.341
+  },
+  "mandopop": {
+    "valence_energy": 0.344,
+    "valence_danceability": 0.393,
+    "energy_danceability": 0.255
+  },
+  "metal": {
+    "valence_energy": 0.198,
+    "valence_danceability": 0.427,
+    "energy_danceability": -0.037
+  },
+  "metalcore": {
+    "valence_energy": -0.003,
+    "valence_danceability": 0.302,
+    "energy_danceability": -0.123
+  },
+  "minimal-techno": {
+    "valence_energy": 0.008,
+    "valence_danceability": 0.255,
+    "energy_danceability": -0.165
+  },
+  "mpb": {
+    "valence_energy": 0.452,
+    "valence_danceability": 0.416,
+    "energy_danceability": 0.052
+  },
+  "new-age": {
+    "valence_energy": 0.531,
+    "valence_danceability": 0.601,
+    "energy_danceability": 0.399
+  },
+  "opera": {
+    "valence_energy": 0.403,
+    "valence_danceability": 0.598,
+    "energy_danceability": 0.34
+  },
+  "pagode": {
+    "valence_energy": 0.294,
+    "valence_danceability": 0.25,
+    "energy_danceability": 0.005
+  },
+  "party": {
+    "valence_energy": 0.054,
+    "valence_danceability": 0.344,
+    "energy_danceability": -0.261
+  },
+  "piano": {
+    "valence_energy": 0.582,
+    "valence_danceability": 0.446,
+    "energy_danceability": 0.418
+  },
+  "pop-film": {
+    "valence_energy": 0.465,
+    "valence_danceability": 0.423,
+    "energy_danceability": 0.279
+  },
+  "pop": {
+    "valence_energy": 0.414,
+    "valence_danceability": 0.416,
+    "energy_danceability": 0.283
+  },
+  "power-pop": {
+    "valence_energy": 0.106,
+    "valence_danceability": 0.326,
+    "energy_danceability": -0.369
+  },
+  "progressive-house": {
+    "valence_energy": -0.057,
+    "valence_danceability": 0.388,
+    "energy_danceability": -0.156
+  },
+  "psych-rock": {
+    "valence_energy": 0.368,
+    "valence_danceability": 0.469,
+    "energy_danceability": -0.004
+  },
+  "punk-rock": {
+    "valence_energy": 0.219,
+    "valence_danceability": 0.385,
+    "energy_danceability": -0.242
+  },
+  "punk": {
+    "valence_energy": 0.21,
+    "valence_danceability": 0.367,
+    "energy_danceability": -0.261
+  },
+  "r-n-b": {
+    "valence_energy": 0.212,
+    "valence_danceability": 0.404,
+    "energy_danceability": -0.072
+  },
+  "reggae": {
+    "valence_energy": 0.284,
+    "valence_danceability": 0.166,
+    "energy_danceability": -0.076
+  },
+  "reggaeton": {
+    "valence_energy": 0.358,
+    "valence_danceability": 0.155,
+    "energy_danceability": -0.094
+  },
+  "rock-n-roll": {
+    "valence_energy": 0.522,
+    "valence_danceability": 0.568,
+    "energy_danceability": 0.186
+  },
+  "rock": {
+    "valence_energy": 0.288,
+    "valence_danceability": 0.455,
+    "energy_danceability": -0.015
+  },
+  "rockabilly": {
+    "valence_energy": 0.438,
+    "valence_danceability": 0.463,
+    "energy_danceability": 0.076
+  },
+  "romance": {
+    "valence_energy": 0.404,
+    "valence_danceability": 0.662,
+    "energy_danceability": 0.113
+  },
+  "sad": {
+    "valence_energy": 0.293,
+    "valence_danceability": 0.307,
+    "energy_danceability": -0.014
+  },
+  "salsa": {
+    "valence_energy": 0.204,
+    "valence_danceability": 0.28,
+    "energy_danceability": 0.06
+  },
+  "samba": {
+    "valence_energy": 0.452,
+    "valence_danceability": 0.355,
+    "energy_danceability": -0.005
+  },
+  "sertanejo": {
+    "valence_energy": 0.389,
+    "valence_danceability": 0.499,
+    "energy_danceability": 0.165
+  },
+  "show-tunes": {
+    "valence_energy": 0.464,
+    "valence_danceability": 0.653,
+    "energy_danceability": 0.364
+  },
+  "singer-songwriter": {
+    "valence_energy": 0.479,
+    "valence_danceability": 0.432,
+    "energy_danceability": 0.104
+  },
+  "ska": {
+    "valence_energy": 0.009,
+    "valence_danceability": 0.463,
+    "energy_danceability": -0.388
+  },
+  "sleep": {
+    "valence_energy": -0.232,
+    "valence_danceability": 0.504,
+    "energy_danceability": 0.196
+  },
+  "songwriter": {
+    "valence_energy": 0.479,
+    "valence_danceability": 0.432,
+    "energy_danceability": 0.104
+  },
+  "soul": {
+    "valence_energy": 0.493,
+    "valence_danceability": 0.388,
+    "energy_danceability": 0.255
+  },
+  "spanish": {
+    "valence_energy": 0.4,
+    "valence_danceability": 0.423,
+    "energy_danceability": 0.003
+  },
+  "study": {
+    "valence_energy": 0.279,
+    "valence_danceability": 0.268,
+    "energy_danceability": -0.005
+  },
+  "swedish": {
+    "valence_energy": 0.48,
+    "valence_danceability": 0.373,
+    "energy_danceability": 0.242
+  },
+  "synth-pop": {
+    "valence_energy": 0.344,
+    "valence_danceability": 0.36,
+    "energy_danceability": -0.025
+  },
+  "tango": {
+    "valence_energy": 0.341,
+    "valence_danceability": 0.557,
+    "energy_danceability": -0.037
+  },
+  "techno": {
+    "valence_energy": 0.076,
+    "valence_danceability": 0.146,
+    "energy_danceability": -0.311
+  },
+  "trance": {
+    "valence_energy": -0.113,
+    "valence_danceability": 0.31,
+    "energy_danceability": -0.371
+  },
+  "trip-hop": {
+    "valence_energy": 0.311,
+    "valence_danceability": 0.376,
+    "energy_danceability": 0.064
+  },
+  "turkish": {
+    "valence_energy": 0.349,
+    "valence_danceability": 0.216,
+    "energy_danceability": 0.25
+  },
+  "world-music": {
+    "valence_energy": 0.417,
+    "valence_danceability": 0.626,
+    "energy_danceability": 0.377
+  }
+}

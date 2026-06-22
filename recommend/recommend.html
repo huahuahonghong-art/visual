@@ -1,0 +1,1226 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>推荐几首 | Spotify Rhythm Atlas</title>
+  <link rel="stylesheet" href="../shared/theme.css">
+  <style>
+    * { box-sizing: border-box; }
+
+    body.spotify-recommend,
+    body.spotify-unified.spotify-recommend {
+      min-height: 100vh;
+      margin: 0;
+      padding: 18px 24px 42px;
+      color: #f4efe5;
+      background:
+        linear-gradient(120deg, rgba(151, 50, 61, 0.12), transparent 34%),
+        radial-gradient(circle at 18% 12%, rgba(215, 170, 60, 0.14), transparent 26%),
+        radial-gradient(circle at 82% 28%, rgba(31, 143, 122, 0.12), transparent 30%),
+        linear-gradient(180deg, #222326 0%, #17181b 52%, #101114 100%);
+      background-attachment: fixed;
+      font-family: var(--font-sans);
+    }
+
+    body.spotify-recommend::before,
+    body.spotify-recommend::after {
+      opacity: 0 !important;
+    }
+
+    .recommend-shell {
+      width: min(1380px, calc(100% - 24px));
+      margin: 0 auto;
+      padding: 22px 0 50px;
+    }
+
+    .recommend-hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap: 28px;
+      align-items: stretch;
+      min-height: 260px;
+      padding: 34px;
+      border: 1px solid rgba(255, 250, 240, 0.13);
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(42, 43, 47, 0.92), rgba(27, 28, 31, 0.92));
+      box-shadow: 0 28px 58px rgba(0, 0, 0, 0.28);
+      overflow: hidden;
+    }
+
+    .recommend-kicker {
+      margin: 0 0 12px;
+      color: #d7aa3c;
+      font-size: 13px;
+      font-weight: 850;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .recommend-hero h1 {
+      margin: 0;
+      color: #fffaf0;
+      font-size: clamp(34px, 5vw, 58px);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+
+    .recommend-hero p {
+      max-width: 760px;
+      margin: 18px 0 0;
+      color: rgba(244, 239, 229, 0.72);
+      font-size: 16px;
+      line-height: 1.85;
+    }
+
+    .recommend-orbit {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 220px;
+    }
+
+    .recommend-icon-wrap {
+      display: grid;
+      place-items: center;
+      width: 214px;
+      height: 214px;
+      border: 1px solid rgba(255, 250, 240, 0.12);
+      border-radius: 38px;
+      background:
+        radial-gradient(circle at 50% 55%, rgba(255, 250, 240, 0.16) 0 36%, transparent 64%),
+        linear-gradient(145deg, rgba(255, 250, 240, 0.08), rgba(255, 250, 240, 0.025));
+      box-shadow: 0 28px 50px rgba(0, 0, 0, 0.28);
+      transform: translate(4px, -2px);
+    }
+
+    .recommend-icon-art {
+      display: block;
+      width: min(156px, 60vw);
+      height: auto;
+      filter: drop-shadow(0 28px 42px rgba(0, 0, 0, 0.34));
+      transform: translateY(4px);
+    }
+
+    .recommend-bubble {
+      position: absolute;
+      right: 20px;
+      bottom: 18px;
+      padding: 10px 13px;
+      border: 1px solid rgba(215, 170, 60, 0.38);
+      border-radius: 12px;
+      color: #1d1e22;
+      background: #d7aa3c;
+      font-size: 14px;
+      font-weight: 900;
+      box-shadow: 0 18px 34px rgba(0, 0, 0, 0.24);
+    }
+
+    .recommend-workbench {
+      display: grid;
+      grid-template-columns: minmax(320px, 0.9fr) minmax(0, 1.1fr);
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .survey-panel,
+    .result-panel {
+      border: 1px solid rgba(255, 250, 240, 0.12);
+      border-radius: 16px;
+      background: rgba(35, 36, 40, 0.9);
+      box-shadow: 0 22px 48px rgba(0, 0, 0, 0.2);
+    }
+
+    .survey-panel {
+      padding: 22px;
+    }
+
+    .survey-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .survey-head h2,
+    .result-head h2 {
+      margin: 0;
+      color: #fffaf0;
+      font-size: 24px;
+      line-height: 1.2;
+    }
+
+    .data-status {
+      padding: 7px 10px;
+      border: 1px solid rgba(31, 143, 122, 0.28);
+      border-radius: 999px;
+      color: #aee3d7;
+      background: rgba(31, 143, 122, 0.1);
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .question-list {
+      display: grid;
+      gap: 16px;
+    }
+
+    .question-card {
+      padding: 16px;
+      border: 1px solid rgba(255, 250, 240, 0.1);
+      border-radius: 12px;
+      background: rgba(255, 250, 240, 0.04);
+    }
+
+    .question-card h3 {
+      margin: 0 0 12px;
+      color: rgba(255, 250, 240, 0.88);
+      font-size: 15px;
+    }
+
+    .question-meta {
+      display: inline-flex;
+      margin: 0 0 10px;
+      padding: 4px 8px;
+      border: 1px solid rgba(215, 170, 60, 0.25);
+      border-radius: 999px;
+      color: #d7aa3c;
+      background: rgba(215, 170, 60, 0.08);
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    .choice-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    body.spotify-recommend button.choice-btn {
+      position: relative;
+      min-height: 38px;
+      padding: 9px 12px;
+      border: 1px solid rgba(255, 250, 240, 0.12);
+      border-radius: 999px;
+      color: rgba(255, 250, 240, 0.78);
+      background: rgba(255, 250, 240, 0.05);
+      cursor: pointer;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 760;
+      transition:
+        transform 0.18s var(--ease-out),
+        border-color 0.18s var(--ease-out),
+        background 0.18s var(--ease-out),
+        color 0.18s var(--ease-out);
+    }
+
+    body.spotify-recommend button.choice-btn:hover {
+      border-color: rgba(215, 170, 60, 0.62);
+      color: #fffaf0;
+      background: rgba(151, 50, 61, 0.32);
+      transform: translateY(-1px);
+    }
+
+    body.spotify-recommend button.choice-btn.active {
+      padding-right: 34px;
+      border-color: rgba(215, 170, 60, 0.9);
+      color: #fffaf0;
+      background: linear-gradient(135deg, rgba(151, 50, 61, 0.96), rgba(120, 38, 48, 0.92));
+      box-shadow:
+        inset 0 0 0 1px rgba(255, 250, 240, 0.12),
+        0 10px 20px rgba(151, 50, 61, 0.22);
+      transform: translateY(-1px);
+    }
+
+    body.spotify-recommend button.choice-btn.active::after {
+      position: absolute;
+      right: 11px;
+      top: 50%;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      color: #191a1d;
+      background: #d7aa3c;
+      content: "✓";
+      font-size: 11px;
+      font-weight: 950;
+      line-height: 16px;
+      text-align: center;
+      transform: translateY(-50%);
+    }
+
+    .survey-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    body.spotify-recommend button.recommend-btn,
+    body.spotify-recommend button.ghost-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 44px;
+      border-radius: 10px;
+      cursor: pointer;
+      font: inherit;
+      transition:
+        transform 0.18s var(--ease-out),
+        border-color 0.18s var(--ease-out),
+        background 0.18s var(--ease-out),
+        box-shadow 0.18s var(--ease-out);
+    }
+
+    body.spotify-recommend button.recommend-btn {
+      padding: 0 18px;
+      border: 1px solid rgba(215, 170, 60, 0.42);
+      color: #191a1d;
+      background: linear-gradient(135deg, #d7aa3c, #fff1b3);
+      font-weight: 900;
+      box-shadow: 0 14px 28px rgba(215, 170, 60, 0.16);
+    }
+
+    body.spotify-recommend button.recommend-btn:hover {
+      box-shadow: 0 18px 34px rgba(215, 170, 60, 0.2);
+      transform: translateY(-1px);
+    }
+
+    body.spotify-recommend button.ghost-btn {
+      padding: 0 16px;
+      border: 1px solid rgba(255, 250, 240, 0.16);
+      color: rgba(255, 250, 240, 0.82);
+      background: rgba(255, 250, 240, 0.04);
+      font-weight: 800;
+    }
+
+    body.spotify-recommend button.ghost-btn:hover {
+      border-color: rgba(215, 170, 60, 0.56);
+      color: #fffaf0;
+      background: rgba(215, 170, 60, 0.1);
+      transform: translateY(-1px);
+    }
+
+    body.spotify-recommend button.clear-btn:hover {
+      border-color: rgba(151, 50, 61, 0.52);
+      background: rgba(151, 50, 61, 0.18);
+    }
+
+    .btn-icon {
+      display: inline-grid;
+      place-items: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background: rgba(255, 250, 240, 0.12);
+      font-size: 13px;
+      font-weight: 950;
+      line-height: 1;
+    }
+
+    .result-panel {
+      min-height: 560px;
+      padding: 22px;
+    }
+
+    .result-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: flex-start;
+      margin-bottom: 18px;
+    }
+
+    .target-card {
+      display: grid;
+      gap: 9px;
+      min-width: 220px;
+      padding: 13px;
+      border: 1px solid rgba(255, 250, 240, 0.11);
+      border-radius: 12px;
+      background: rgba(255, 250, 240, 0.04);
+    }
+
+    .target-card span {
+      color: rgba(255, 250, 240, 0.58);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .target-bars {
+      display: grid;
+      gap: 8px;
+    }
+
+    .target-bar {
+      display: grid;
+      grid-template-columns: 64px 1fr;
+      gap: 8px;
+      align-items: center;
+      color: rgba(255, 250, 240, 0.72);
+      font-size: 12px;
+    }
+
+    .target-bar i,
+    .feature-meter i {
+      display: block;
+      height: 7px;
+      border-radius: 999px;
+      background: rgba(255, 250, 240, 0.1);
+      overflow: hidden;
+    }
+
+    .target-bar i::before,
+    .feature-meter i::before {
+      display: block;
+      width: calc(var(--value) * 1%);
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #97323d, #d7aa3c);
+      content: "";
+    }
+
+    .empty-result {
+      display: grid;
+      place-items: center;
+      min-height: 420px;
+      border: 1px dashed rgba(255, 250, 240, 0.14);
+      border-radius: 14px;
+      color: rgba(255, 250, 240, 0.62);
+      text-align: center;
+      line-height: 1.7;
+    }
+
+    .result-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .song-card {
+      display: grid;
+      grid-template-columns: 70px minmax(0, 1fr);
+      gap: 14px;
+      padding: 14px;
+      border: 1px solid rgba(255, 250, 240, 0.1);
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(255, 250, 240, 0.06), rgba(255, 250, 240, 0.025));
+      transition:
+        transform 0.18s var(--ease-out),
+        border-color 0.18s var(--ease-out),
+        background 0.18s var(--ease-out);
+    }
+
+    .song-card:hover {
+      border-color: rgba(215, 170, 60, 0.45);
+      background: linear-gradient(135deg, rgba(151, 50, 61, 0.18), rgba(255, 250, 240, 0.045));
+      transform: translateY(-2px);
+    }
+
+    .song-rank {
+      display: grid;
+      place-items: center;
+      width: 64px;
+      height: 64px;
+      border-radius: 14px;
+      color: #191a1d;
+      background:
+        radial-gradient(circle at 50% 50%, #fffaf0 0 8px, transparent 9px),
+        repeating-radial-gradient(circle, #d7aa3c 0 8px, #97323d 9px 11px, #202124 12px 18px);
+      font-size: 14px;
+      font-weight: 950;
+    }
+
+    .song-main {
+      min-width: 0;
+    }
+
+    .song-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .song-title {
+      margin: 0;
+      color: #fffaf0;
+      font-size: 18px;
+      line-height: 1.3;
+    }
+
+    .song-meta {
+      margin: 5px 0 0;
+      color: rgba(255, 250, 240, 0.58);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .match-badge {
+      flex: 0 0 auto;
+      padding: 7px 10px;
+      border-radius: 999px;
+      color: #191a1d;
+      background: #d7aa3c;
+      font-size: 12px;
+      font-weight: 950;
+    }
+
+    .reason-line {
+      margin: 10px 0 12px;
+      color: rgba(255, 250, 240, 0.78);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .feature-meter {
+      display: grid;
+      gap: 5px;
+      color: rgba(255, 250, 240, 0.58);
+      font-size: 11px;
+    }
+
+    @media (max-width: 980px) {
+      .recommend-hero,
+      .recommend-workbench {
+        grid-template-columns: 1fr;
+      }
+
+      .recommend-orbit {
+        min-height: 180px;
+      }
+
+      .feature-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 620px) {
+      body.spotify-recommend {
+        padding: 14px 12px 82px;
+      }
+
+      .recommend-shell {
+        width: min(100%, 640px);
+      }
+
+      .recommend-hero,
+      .survey-panel,
+      .result-panel {
+        padding: 18px;
+      }
+
+      .result-head,
+      .song-top {
+        flex-direction: column;
+      }
+
+      .song-card {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Align the recommendation workspace with the atlas paper theme. */
+    body.spotify-recommend,
+    body.spotify-unified.spotify-recommend {
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 16% 18%, transparent 0 72px, rgba(78, 49, 24, 0.1) 73px 76px, transparent 77px),
+        radial-gradient(circle at 26% 60%, transparent 0 94px, rgba(78, 49, 24, 0.08) 95px 98px, transparent 99px),
+        linear-gradient(110deg, rgba(221, 184, 78, 0.3) 0 40%, rgba(244, 234, 215, 0.94) 40.1% 70%, rgba(151, 50, 61, 0.26) 70.1% 100%),
+        var(--paper);
+      background-attachment: fixed;
+    }
+
+    .recommend-hero {
+      border-color: var(--line);
+      background: linear-gradient(100deg, rgba(255, 250, 237, 0.95), rgba(239, 221, 192, 0.92));
+      box-shadow: var(--shadow);
+    }
+
+    .recommend-kicker,
+    .question-meta {
+      color: var(--wine);
+    }
+
+    .recommend-hero h1,
+    .survey-head h2,
+    .result-head h2,
+    .question-card h3,
+    .song-title {
+      color: var(--ink);
+    }
+
+    .recommend-hero p,
+    .song-meta,
+    .feature-meter,
+    .target-card span {
+      color: var(--muted);
+    }
+
+    .recommend-icon-wrap {
+      border-color: rgba(151, 50, 61, 0.16);
+      background:
+        radial-gradient(circle at 50% 55%, rgba(215, 170, 60, 0.22) 0 36%, transparent 65%),
+        linear-gradient(145deg, rgba(255, 250, 240, 0.92), rgba(239, 221, 192, 0.82));
+      box-shadow: 0 24px 44px rgba(74, 30, 14, 0.16);
+    }
+
+    .recommend-icon-art {
+      filter: drop-shadow(0 22px 32px rgba(74, 30, 14, 0.22));
+    }
+
+    .recommend-bubble {
+      color: var(--ink);
+      box-shadow: 0 14px 28px rgba(74, 30, 14, 0.16);
+    }
+
+    .survey-panel,
+    .result-panel {
+      border-color: var(--line);
+      background: rgba(255, 250, 237, 0.9);
+      box-shadow: 0 14px 34px rgba(74, 30, 14, 0.1);
+    }
+
+    .data-status {
+      border-color: rgba(31, 143, 122, 0.28);
+      color: #176b5c;
+      background: rgba(31, 143, 122, 0.1);
+    }
+
+    .question-card,
+    .target-card {
+      border-color: rgba(24, 32, 51, 0.1);
+      background: rgba(255, 255, 255, 0.52);
+    }
+
+    .question-meta {
+      border-color: rgba(151, 50, 61, 0.2);
+      background: rgba(215, 170, 60, 0.14);
+    }
+
+    body.spotify-recommend button.choice-btn {
+      border-color: rgba(24, 32, 51, 0.14);
+      color: var(--ink);
+      background: var(--paper-soft);
+    }
+
+    body.spotify-recommend button.choice-btn:hover {
+      border-color: rgba(151, 50, 61, 0.42);
+      color: var(--wine);
+      background: rgba(215, 170, 60, 0.18);
+    }
+
+    body.spotify-recommend button.choice-btn.active {
+      border-color: rgba(151, 50, 61, 0.7);
+      color: #fffaf0;
+      background: var(--wine);
+      box-shadow: 0 10px 20px rgba(151, 50, 61, 0.18);
+    }
+
+    body.spotify-recommend button.recommend-btn {
+      border-color: rgba(151, 50, 61, 0.24);
+      color: #fffaf0;
+      background: var(--wine);
+      box-shadow: 0 10px 22px rgba(151, 50, 61, 0.14);
+    }
+
+    body.spotify-recommend button.recommend-btn:hover {
+      color: var(--ink);
+      background: var(--mustard);
+      box-shadow: 0 14px 28px rgba(74, 30, 14, 0.16);
+    }
+
+    body.spotify-recommend button.ghost-btn {
+      border-color: rgba(24, 32, 51, 0.16);
+      color: var(--ink);
+      background: var(--paper-soft);
+    }
+
+    body.spotify-recommend button.ghost-btn:hover {
+      border-color: rgba(151, 50, 61, 0.4);
+      color: var(--wine);
+      background: rgba(215, 170, 60, 0.16);
+    }
+
+    .btn-icon {
+      background: rgba(151, 50, 61, 0.1);
+    }
+
+    .target-bar {
+      color: #4f3d39;
+    }
+
+    .target-bar i,
+    .feature-meter i {
+      background: rgba(24, 32, 51, 0.1);
+    }
+
+    .empty-result {
+      border-color: rgba(24, 32, 51, 0.16);
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.28);
+    }
+
+    .song-card {
+      border-color: rgba(24, 32, 51, 0.1);
+      background: rgba(255, 255, 255, 0.5);
+      box-shadow: 0 10px 22px rgba(74, 30, 14, 0.06);
+    }
+
+    .song-card:hover {
+      border-color: rgba(151, 50, 61, 0.32);
+      background: rgba(255, 250, 237, 0.94);
+      box-shadow: 0 16px 30px rgba(74, 30, 14, 0.12);
+    }
+
+    .reason-line {
+      color: #4f3d39;
+    }
+
+    .match-badge {
+      color: var(--ink);
+      background: var(--mustard);
+    }
+  </style>
+</head>
+<body class="spotify-recommend">
+  <main class="recommend-shell">
+    <section class="recommend-hero">
+      <div>
+        <p class="recommend-kicker">Personal Music Match</p>
+        <h1>推荐几首</h1>
+        <p>回答几个轻松的问题，把当下想听的氛围转成 Spotify 音频特征。系统会在数据集中寻找最接近的歌曲，并告诉你推荐理由。</p>
+      </div>
+      <div class="recommend-orbit" aria-hidden="true">
+        <div class="recommend-icon-wrap">
+          <img class="recommend-icon-art" src="../shared/recommend-icon.png" alt="">
+        </div>
+        <div class="recommend-bubble">来几首?</div>
+      </div>
+    </section>
+
+    <section class="recommend-workbench">
+      <article class="survey-panel">
+        <div class="survey-head">
+          <h2>今天想听什么</h2>
+          <span class="data-status" id="dataStatus">歌曲库加载中</span>
+        </div>
+        <div class="question-list" id="questionList"></div>
+        <div class="survey-actions">
+          <button class="recommend-btn" id="generateBtn">生成推荐</button>
+          <button class="ghost-btn" id="resetBtn"><span class="btn-icon" aria-hidden="true">↻</span>换个心情</button>
+          <button class="ghost-btn clear-btn" id="clearBtn"><span class="btn-icon" aria-hidden="true">×</span>清空</button>
+        </div>
+      </article>
+
+      <article class="result-panel">
+        <div class="result-head">
+          <div>
+            <p class="recommend-kicker">Matching Results</p>
+            <h2 id="resultTitle">先完成左侧问卷</h2>
+          </div>
+          <div class="target-card" id="targetCard">
+            <span>目标特征</span>
+            <div class="target-bars" id="targetBars"></div>
+          </div>
+        </div>
+        <div id="resultArea" class="empty-result">
+          <div>选好几个偏好后，点击“生成推荐”。<br>我会从歌曲库里挑出最贴近这次心情的几首。</div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    const QUESTIONS = [
+      {
+        key: "vibe",
+        title: "现在更想靠近哪种氛围?",
+        type: "写意感受",
+        choices: [
+          ["bright", "明亮开心"],
+          ["calm", "安静放松"],
+          ["focus", "专注不打扰"],
+          ["night", "深夜微醺"]
+        ]
+      },
+      {
+        key: "scene",
+        title: "这几首歌准备放在哪里?",
+        type: "写意感受",
+        choices: [
+          ["commute", "通勤路上"],
+          ["workout", "运动加速"],
+          ["party", "朋友聚会"],
+          ["rain", "雨天窗口"],
+          ["road", "兜风散步"]
+        ]
+      },
+      {
+        key: "motion",
+        title: "身体想动起来吗?",
+        type: "写意感受",
+        choices: [
+          ["quiet", "坐着听就好"],
+          ["balanced", "一点律动"],
+          ["dance", "想跟着摇"],
+          ["burst", "越有能量越好"]
+        ]
+      },
+      {
+        key: "tone",
+        title: "这次播放像什么颜色?",
+        type: "写意感受",
+        choices: [
+          ["warm", "暖黄灯"],
+          ["cool", "冷蓝调"],
+          ["cinematic", "电影暗场"],
+          ["spark", "亮晶晶"]
+        ]
+      },
+      {
+        key: "popularity",
+        title: "流行度目标区间?",
+        type: "精准参数",
+        choices: [
+          ["hit", "70+ 热门"],
+          ["balanced", "40-70 均衡"],
+          ["fresh", "40 以下探索"]
+        ]
+      },
+      {
+        key: "texture",
+        title: "声音成分更偏哪类?",
+        type: "精准参数",
+        choices: [
+          ["vocal", "人声清楚"],
+          ["acoustic", "原声温暖"],
+          ["instrumental", "器乐空间"],
+          ["electronic", "电子律动"]
+        ]
+      },
+      {
+        key: "tempoBand",
+        title: "BPM 大概想要多少?",
+        type: "精准参数",
+        choices: [
+          ["slow", "< 90 慢速"],
+          ["mid", "90-120 中速"],
+          ["fast", "120-145 快速"],
+          ["rush", "145+ 高速"]
+        ]
+      },
+      {
+        key: "genre",
+        title: "流派要限定吗?",
+        type: "精准参数",
+        choices: [
+          ["any", "不限定"],
+          ["pop", "Pop"],
+          ["rock", "Rock"],
+          ["hip-hop", "Hip-hop"],
+          ["edm", "EDM"],
+          ["jazz", "Jazz"],
+          ["acoustic", "Acoustic"]
+        ]
+      }
+    ];
+
+    const DEFAULT_ANSWERS = {
+      vibe: "bright",
+      scene: "commute",
+      motion: "balanced",
+      tone: "warm",
+      popularity: "balanced",
+      texture: "vocal",
+      tempoBand: "mid",
+      genre: "any"
+    };
+
+    const FEATURE_LABELS = {
+      valence: "愉悦",
+      energy: "能量",
+      danceability: "律动",
+      acousticness: "原声",
+      popularity: "流行"
+    };
+
+    const answers = { ...DEFAULT_ANSWERS };
+    let songLibrary = [];
+    const emptyResultHtml = "<div>选好几个偏好后，点击“生成推荐”。<br>我会从歌曲库里挑出最贴近这次心情的几首。</div>";
+
+    function selectedState(state = answers) {
+      return { ...DEFAULT_ANSWERS, ...state };
+    }
+
+    function renderQuestions() {
+      document.getElementById("questionList").innerHTML = QUESTIONS.map((question) => `
+        <section class="question-card">
+          <span class="question-meta">${question.type}</span>
+          <h3>${question.title}</h3>
+          <div class="choice-grid">
+            ${question.choices.map(([value, label]) => `
+              <button class="choice-btn ${answers[question.key] === value ? "active" : ""}" data-key="${question.key}" data-value="${value}">
+                ${label}
+              </button>
+            `).join("")}
+          </div>
+        </section>
+      `).join("");
+
+      document.querySelectorAll(".choice-btn").forEach((button) => {
+        button.addEventListener("click", () => {
+          answers[button.dataset.key] = button.dataset.value;
+          renderQuestions();
+          renderTargetCard(buildTarget(answers));
+        });
+      });
+    }
+
+    function clamp(value, min = 0, max = 1) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function mix(base, patch, amount = 1) {
+      if (!patch) return base;
+      Object.entries(patch).forEach(([key, value]) => {
+        base[key] = clamp(base[key] + (value - base[key]) * amount);
+      });
+      return base;
+    }
+
+    function buildTarget(state) {
+      const selected = selectedState(state);
+      const target = {
+        danceability: 0.58,
+        energy: 0.56,
+        valence: 0.58,
+        acousticness: 0.34,
+        instrumentalness: 0.08,
+        speechiness: 0.1,
+        liveness: 0.18,
+        tempo: 0.54,
+        popularity: 0.58
+      };
+
+      const vibeMap = {
+        bright: { valence: 0.82, energy: 0.62, danceability: 0.62, acousticness: 0.28 },
+        calm: { valence: 0.48, energy: 0.25, danceability: 0.34, acousticness: 0.76, tempo: 0.36 },
+        focus: { valence: 0.42, energy: 0.32, danceability: 0.32, acousticness: 0.58, instrumentalness: 0.58, speechiness: 0.06 },
+        night: { valence: 0.34, energy: 0.42, danceability: 0.52, acousticness: 0.38, liveness: 0.22 }
+      };
+
+      const sceneMap = {
+        commute: { energy: 0.56, danceability: 0.65, tempo: 0.58, popularity: 0.66 },
+        workout: { energy: 0.88, danceability: 0.76, tempo: 0.74, popularity: 0.62 },
+        party: { energy: 0.84, danceability: 0.88, valence: 0.74, liveness: 0.28 },
+        rain: { acousticness: 0.82, energy: 0.26, valence: 0.36, tempo: 0.36 },
+        road: { energy: 0.64, valence: 0.68, tempo: 0.62, danceability: 0.6 }
+      };
+
+      const motionMap = {
+        quiet: { energy: 0.28, danceability: 0.32, tempo: 0.38 },
+        balanced: { energy: 0.52, danceability: 0.58, tempo: 0.52 },
+        dance: { energy: 0.72, danceability: 0.82, tempo: 0.66 },
+        burst: { energy: 0.9, danceability: 0.74, tempo: 0.76 }
+      };
+
+      const toneMap = {
+        warm: { valence: 0.66, acousticness: 0.48, energy: 0.48 },
+        cool: { valence: 0.38, energy: 0.42, instrumentalness: 0.32, acousticness: 0.34 },
+        cinematic: { valence: 0.3, energy: 0.46, instrumentalness: 0.44, liveness: 0.24 },
+        spark: { valence: 0.84, energy: 0.68, danceability: 0.7, tempo: 0.62 }
+      };
+
+      const popularityMap = {
+        hit: { popularity: 0.82 },
+        balanced: { popularity: 0.58 },
+        fresh: { popularity: 0.28 }
+      };
+
+      const textureMap = {
+        vocal: { speechiness: 0.13, instrumentalness: 0.03, acousticness: 0.28 },
+        acoustic: { acousticness: 0.84, energy: 0.34, instrumentalness: 0.1 },
+        instrumental: { instrumentalness: 0.72, speechiness: 0.04, acousticness: 0.46 },
+        electronic: { acousticness: 0.1, energy: 0.76, danceability: 0.78, instrumentalness: 0.18 }
+      };
+
+      const tempoBandMap = {
+        slow: { tempo: 0.34, energy: 0.34, danceability: 0.38 },
+        mid: { tempo: 0.52, energy: 0.54, danceability: 0.58 },
+        fast: { tempo: 0.64, energy: 0.72, danceability: 0.72 },
+        rush: { tempo: 0.78, energy: 0.86, danceability: 0.68 }
+      };
+
+      mix(target, vibeMap[selected.vibe], 0.9);
+      mix(target, sceneMap[selected.scene], 0.72);
+      mix(target, motionMap[selected.motion], 0.76);
+      mix(target, toneMap[selected.tone], 0.68);
+      mix(target, popularityMap[selected.popularity], 0.8);
+      mix(target, textureMap[selected.texture], 0.68);
+      mix(target, tempoBandMap[selected.tempoBand], 0.74);
+      return target;
+    }
+
+    function renderTargetCard(target) {
+      document.getElementById("targetBars").innerHTML = ["valence", "energy", "danceability", "acousticness", "popularity"].map((key) => `
+        <div class="target-bar">
+          <span>${FEATURE_LABELS[key]}</span>
+          <i style="--value:${Math.round(target[key] * 100)}"></i>
+        </div>
+      `).join("");
+    }
+
+    function parseCsvLine(line) {
+      const cells = [];
+      let current = "";
+      let quoted = false;
+      for (let i = 0; i < line.length; i += 1) {
+        const char = line[i];
+        if (char === '"') {
+          if (quoted && line[i + 1] === '"') {
+            current += '"';
+            i += 1;
+          } else {
+            quoted = !quoted;
+          }
+        } else if (char === "," && !quoted) {
+          cells.push(current);
+          current = "";
+        } else {
+          current += char;
+        }
+      }
+      cells.push(current);
+      return cells;
+    }
+
+    function numberValue(value, fallback = 0) {
+      const parsed = Number(value);
+      return Number.isFinite(parsed) ? parsed : fallback;
+    }
+
+    function escapeHtml(value) {
+      const div = document.createElement("div");
+      div.textContent = value == null ? "" : String(value);
+      return div.innerHTML;
+    }
+
+    async function loadSongs() {
+      const status = document.getElementById("dataStatus");
+      try {
+        const response = await fetch("../module3and4/dataset.csv");
+        if (!response.ok) throw new Error("歌曲数据读取失败");
+        const text = await response.text();
+        const rows = text.split(/\r?\n/).filter(Boolean);
+        const headers = parseCsvLine(rows.shift());
+        const index = Object.fromEntries(headers.map((header, i) => [header, i]));
+        const bestByTrack = new Map();
+
+        rows.forEach((line) => {
+          const cells = parseCsvLine(line);
+          const trackName = cells[index.track_name];
+          const artists = cells[index.artists];
+          if (!trackName || !artists) return;
+
+          const song = {
+            id: cells[index.track_id],
+            artists,
+            trackName,
+            albumName: cells[index.album_name],
+            genre: cells[index.track_genre],
+            popularity: numberValue(cells[index.popularity]) / 100,
+            danceability: numberValue(cells[index.danceability]),
+            energy: numberValue(cells[index.energy]),
+            speechiness: numberValue(cells[index.speechiness]),
+            acousticness: numberValue(cells[index.acousticness]),
+            instrumentalness: numberValue(cells[index.instrumentalness]),
+            liveness: numberValue(cells[index.liveness]),
+            valence: numberValue(cells[index.valence]),
+            tempo: clamp(numberValue(cells[index.tempo]) / 220)
+          };
+
+          const dedupeKey = `${trackName.toLowerCase()}::${artists.toLowerCase()}`;
+          const existing = bestByTrack.get(dedupeKey);
+          if (!existing || song.popularity > existing.popularity) bestByTrack.set(dedupeKey, song);
+        });
+
+        songLibrary = Array.from(bestByTrack.values());
+        status.textContent = `${songLibrary.length.toLocaleString("zh-CN")} 首歌已就绪`;
+      } catch (error) {
+        status.textContent = "歌曲库加载失败";
+        status.style.borderColor = "rgba(151, 50, 61, 0.5)";
+        status.style.color = "#97323d";
+        console.error(error);
+      }
+    }
+
+    function genrePenalty(song, genre) {
+      if (genre === "any") return 0;
+      const group = {
+        pop: ["pop", "power-pop", "synth-pop", "j-pop", "k-pop"],
+        rock: ["rock", "alt-rock", "hard-rock", "punk-rock", "rock-n-roll"],
+        "hip-hop": ["hip-hop", "rap", "r-n-b"],
+        edm: ["edm", "electro", "electronic", "dance", "house", "techno", "trance"],
+        jazz: ["jazz", "blues"],
+        acoustic: ["acoustic", "folk", "singer-songwriter"]
+      }[genre] || [genre];
+      return group.some((item) => song.genre && song.genre.includes(item)) ? -0.035 : 0.085;
+    }
+
+    function scoreSong(song, target, state) {
+      const selected = selectedState(state);
+      const weights = {
+        danceability: 1.15,
+        energy: 1.22,
+        valence: 1.2,
+        acousticness: 0.78,
+        instrumentalness: 0.68,
+        speechiness: 0.42,
+        liveness: 0.25,
+        tempo: 0.88,
+        popularity: selected.popularity === "balanced" ? 0.36 : 0.82
+      };
+
+      let weightedDistance = 0;
+      let weightTotal = 0;
+      Object.entries(weights).forEach(([key, weight]) => {
+        const delta = song[key] - target[key];
+        weightedDistance += delta * delta * weight;
+        weightTotal += weight;
+      });
+
+      const distance = Math.sqrt(weightedDistance / weightTotal) + genrePenalty(song, selected.genre);
+      return clamp(1 - distance * 1.18, 0, 0.99);
+    }
+
+    function buildReason(song, state) {
+      const selected = selectedState(state);
+      const reasons = [];
+      if (song.valence > 0.68) reasons.push("愉悦度很高");
+      if (song.energy > 0.72) reasons.push("能量充足");
+      if (song.danceability > 0.7) reasons.push("律动感明显");
+      if (selected.tempoBand === "slow" && song.tempo < 0.43) reasons.push("节奏偏慢");
+      if (selected.tempoBand === "fast" && song.tempo > 0.56) reasons.push("BPM 落在快速区间");
+      if (selected.tempoBand === "rush" && song.tempo > 0.66) reasons.push("节奏推进感强");
+      if (song.acousticness > 0.62) reasons.push("原声质感温暖");
+      if (song.instrumentalness > 0.45) reasons.push("器乐空间感更强");
+      if (selected.popularity === "hit" && song.popularity > 0.65) reasons.push("流行度较高");
+      if (selected.popularity === "fresh" && song.popularity < 0.48) reasons.push("适合发现新鲜歌");
+      if (selected.genre !== "any" && song.genre) reasons.push(`${song.genre} 流派贴近偏好`);
+      return reasons.slice(0, 3).join(" · ") || "整体特征和这次选择很接近";
+    }
+
+    function getRecommendations() {
+      if (!songLibrary.length) return [];
+      const target = buildTarget(answers);
+      const candidates = songLibrary
+        .map((song) => ({ ...song, score: scoreSong(song, target, answers) }))
+        .sort((a, b) => b.score - a.score);
+
+      const artistCount = new Map();
+      const picked = [];
+      for (const song of candidates) {
+        const firstArtist = song.artists.split(";")[0].trim().toLowerCase();
+        const count = artistCount.get(firstArtist) || 0;
+        if (count >= 2) continue;
+        picked.push(song);
+        artistCount.set(firstArtist, count + 1);
+        if (picked.length >= 9) break;
+      }
+      return picked;
+    }
+
+    function clearResultPanel() {
+      document.getElementById("resultTitle").textContent = "先完成左侧问卷";
+      document.getElementById("resultArea").className = "empty-result";
+      document.getElementById("resultArea").innerHTML = emptyResultHtml;
+    }
+
+    function randomizeAnswers() {
+      QUESTIONS.forEach((question) => {
+        const randomIndex = Math.floor(Math.random() * question.choices.length);
+        answers[question.key] = question.choices[randomIndex][0];
+      });
+    }
+
+    function clearAnswers() {
+      QUESTIONS.forEach((question) => {
+        delete answers[question.key];
+      });
+    }
+
+    function renderResults() {
+      const resultArea = document.getElementById("resultArea");
+      const resultTitle = document.getElementById("resultTitle");
+      const target = buildTarget(answers);
+      renderTargetCard(target);
+
+      if (!songLibrary.length) {
+        resultTitle.textContent = "歌曲库还在加载";
+        resultArea.className = "empty-result";
+        resultArea.innerHTML = "<div>稍等一下，歌曲数据加载完成后再生成推荐。</div>";
+        return;
+      }
+
+      const songs = getRecommendations();
+      resultTitle.textContent = "这些应该合胃口";
+      resultArea.className = "result-list";
+      resultArea.innerHTML = songs.map((song, index) => `
+        <article class="song-card">
+          <div class="song-rank">${String(index + 1).padStart(2, "0")}</div>
+          <div class="song-main">
+            <div class="song-top">
+              <div>
+                <h3 class="song-title">${escapeHtml(song.trackName)}</h3>
+                <p class="song-meta">${escapeHtml(song.artists)} · ${escapeHtml(song.genre || "unknown")} · ${escapeHtml(song.albumName || "Spotify dataset")}</p>
+              </div>
+              <span class="match-badge">${Math.round(song.score * 100)}% 匹配</span>
+            </div>
+            <p class="reason-line">${escapeHtml(buildReason(song, answers))}</p>
+            <div class="feature-grid">
+              ${["valence", "energy", "danceability", "acousticness", "popularity"].map((key) => `
+                <span class="feature-meter">
+                  ${FEATURE_LABELS[key]}
+                  <i style="--value:${Math.round(song[key] * 100)}"></i>
+                </span>
+              `).join("")}
+            </div>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    document.getElementById("generateBtn").addEventListener("click", renderResults);
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      randomizeAnswers();
+      renderQuestions();
+      renderTargetCard(buildTarget(answers));
+      renderResults();
+    });
+    document.getElementById("clearBtn").addEventListener("click", () => {
+      clearAnswers();
+      renderQuestions();
+      renderTargetCard(buildTarget(answers));
+      clearResultPanel();
+    });
+
+    renderQuestions();
+    renderTargetCard(buildTarget(answers));
+    loadSongs();
+  </script>
+  <script src="../shared/nav.js"></script>
+  <script src="../shared/ui.js"></script>
+</body>
+</html>

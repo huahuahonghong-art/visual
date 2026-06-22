@@ -1,0 +1,1091 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>模块三：风格标签图谱 | 统统可视化</title>
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            padding: 25px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 50% 50%, rgba(78, 205, 196, 0.08) 0%, transparent 70%);
+            pointer-events: none; z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none; z-index: 0;
+        }
+
+        .container { max-width: 1400px; margin: 0 auto; position: relative; z-index: 1; }
+
+        <!--/* ===== HEADER ===== */
+        .header {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 35px 40px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .header h1 {
+            font-size: 32px; color: #fff; margin-bottom: 12px;
+            font-weight: 700; letter-spacing: 1px;
+        }
+        .header h1 span {
+            background: linear-gradient(135deg, #667eea, #764ba2, #4ecdc4);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+            background-size: 200% 200%;
+            animation: gradientShift 3s ease infinite;
+        }
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50%       { background-position: 100% 50%; }
+        }
+        .header p { color: rgba(255,255,255,0.7); font-size: 15px; letter-spacing: 0.5px; }-->
+        /* ========== 新顶部样式（模块二风格） ========== */
+.hero-band {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 390px;
+    align-items: center;
+    gap: 34px;
+    padding: 34px 36px;
+    border-radius: 24px;
+    margin-bottom: 20px;
+    background: rgba(255, 250, 237, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+.eyebrow {
+    margin: 0 0 10px;
+    color: #97323d;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+.hero-band h1 {
+    margin: 0;
+    font-size: 44px;
+    line-height: 1.18;
+    color: #111c2f;
+    letter-spacing: -0.5px;
+}
+.hero-copy {
+    max-width: 780px;
+    margin: 16px 0 0;
+    color: #4f3d39;
+    font-size: 17px;
+    line-height: 1.75;
+}
+.music-visual {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 210px;
+}
+.vinyl-disc {
+    position: relative;
+    width: 238px;
+    height: 150px;
+    border-radius: 16px;
+    background:
+        radial-gradient(circle at 34% 48%, #d7aa3c 0 14px, #111827 15px 27px, transparent 28px),
+        radial-gradient(circle at 66% 48%, #97323d 0 14px, #111827 15px 27px, transparent 28px),
+        linear-gradient(0deg, transparent 0 28px, rgba(255, 255, 255, 0.88) 29px 86px, transparent 87px),
+        repeating-linear-gradient(0deg, #111827 0 5px, #1c2434 6px 8px);
+    box-shadow: 0 24px 38px rgba(32, 16, 16, 0.32);
+    transform: rotate(-10deg);
+}
+.vinyl-disc::before {
+    position: absolute;
+    left: 28px;
+    right: 28px;
+    top: 22px;
+    height: 16px;
+    border-radius: 4px;
+    background: #111827;
+    box-shadow:
+        34px 0 0 #111827,
+        68px 0 0 #111827,
+        102px 0 0 #111827,
+        136px 0 0 #111827;
+    content: "";
+}
+.vinyl-disc span {
+    position: absolute;
+    left: 46px;
+    bottom: 18px;
+    width: 146px;
+    height: 28px;
+    border: 2px solid rgba(17, 24, 39, 0.28);
+    border-radius: 3px;
+    background: #fffaf1;
+}
+.vinyl-disc span::after {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    top: 8px;
+    height: 2px;
+    background: rgba(17, 24, 39, 0.22);
+    box-shadow: 0 8px 0 rgba(17, 24, 39, 0.22);
+    content: "";
+}
+.wave-bars {
+    position: absolute;
+    right: 0;
+    bottom: 8px;
+    display: flex;
+    align-items: end;
+    gap: 5px;
+    height: 92px;
+    padding: 12px 14px;
+    border: 2px solid rgba(24, 32, 51, 0.12);
+    border-radius: 14px;
+    background: rgba(255, 250, 237, 0.68);
+    backdrop-filter: blur(10px);
+}
+.wave-bars i {
+    display: block;
+    width: 5px;
+    height: calc(var(--level) * 1px);
+    border-radius: 999px;
+    background: linear-gradient(180deg, #446a8f, #1f8f7a);
+}
+
+/* 指标卡片网格 */
+.metric-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin: 0 0 20px 0;
+}
+.metric-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 96px;
+    padding: 16px 18px;
+    border: 2px solid rgba(24, 32, 51, 0.08);
+    border-radius: 14px;
+    background: rgba(255, 250, 237, 0.85);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.15);
+}
+.metric-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 42px;
+    height: 42px;
+    padding: 0 9px;
+    border-radius: 12px;
+    color: #ffffff;
+    background: linear-gradient(135deg, #97323d, #d7aa3c);
+    font-size: 20px;
+    font-weight: 800;
+}
+.metric-card p {
+    margin: 0 0 4px;
+    color: #6a7a8f;
+    font-size: 14px;
+}
+.metric-card strong {
+    display: block;
+    color: #111c2f;
+    font-size: 25px;
+    line-height: 1.16;
+}
+.metric-card small {
+    display: block;
+    margin-top: 5px;
+    color: #607085;
+    line-height: 1.45;
+}
+.metric-card-wide strong {
+    font-size: 21px;
+}
+
+/* 响应式适配 */
+@media (max-width: 960px) {
+    .hero-band {
+        grid-template-columns: 1fr;
+        padding: 24px 20px;
+    }
+    .hero-band h1 {
+        font-size: 28px;
+    }
+    .metric-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+        /* ===== ACTION BAR ===== */
+        .action-bar {
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 16px 30px;
+            display: flex; gap: 16px; align-items: center; flex-wrap: wrap;
+            border-radius: 16px; margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .action-bar span { font-weight: 600; color: rgba(255,255,255,0.9); font-size: 14px; }
+        .tag-badge {
+            background: rgba(102,126,234,0.25);
+            border: 1px solid rgba(102,126,234,0.4);
+            padding: 8px 20px; border-radius: 30px;
+            font-size: 14px; color: #fff; font-weight: 600;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .tag-badge i { color: #4ecdc4; }
+        .compare-count {
+            background: rgba(78,205,196,0.2);
+            border: 1px solid rgba(78,205,196,0.35);
+            padding: 8px 20px; border-radius: 30px;
+            font-size: 14px; color: rgba(255,255,255,0.9);
+        }
+        .compare-count i { color: #f39c12; margin-right: 6px; }
+        .action-btn {
+            background: linear-gradient(135deg, rgba(102,126,234,0.3), rgba(118,75,162,0.3));
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 10px 22px; border-radius: 30px;
+            cursor: pointer; color: #fff; font-size: 14px; font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+        }
+        .action-btn:hover {
+            background: linear-gradient(135deg, rgba(102,126,234,0.5), rgba(118,75,162,0.5));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102,126,234,0.3);
+            border-color: rgba(102,126,234,0.5);
+        }
+        .action-btn.danger {
+            background: linear-gradient(135deg, rgba(255,107,107,0.25), rgba(200,50,50,0.25));
+            border-color: rgba(255,107,107,0.3);
+        }
+        .action-btn.danger:hover {
+            background: linear-gradient(135deg, rgba(255,107,107,0.45), rgba(200,50,50,0.45));
+            box-shadow: 0 4px 15px rgba(255,107,107,0.3);
+        }
+        .filter-hint {
+            font-size: 13px; color: rgba(255,255,255,0.5);
+            display: flex; align-items: center; gap: 8px; margin-left: auto;
+        }
+
+        /* ===== MAIN LAYOUT ===== */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        /* ===== LEFT: TAG PANEL ===== */
+        .tag-panel {
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px; padding: 25px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.08);
+            position: sticky; top: 20px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+        .tag-panel-title {
+            font-size: 18px; font-weight: bold; color: #fff;
+            margin-bottom: 16px; padding-bottom: 12px;
+            border-bottom: 3px solid transparent;
+            border-image: linear-gradient(90deg, #667eea, #764ba2, #4ecdc4) 1;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .tag-search {
+            width: 100%; padding: 11px 16px; border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.08);
+            font-size: 14px; color: #fff; outline: none;
+            transition: all 0.3s ease; margin-bottom: 16px;
+        }
+        .tag-search:focus { border-color: #667eea; box-shadow: 0 0 15px rgba(102,126,234,0.25); }
+        .tag-search::placeholder { color: rgba(255,255,255,0.4); }
+        .tag-list {
+            display: flex; flex-wrap: wrap; gap: 8px;
+            max-height: 500px; overflow-y: auto; padding: 4px 2px;
+        }
+        .tag-chip {
+            padding: 7px 16px; border-radius: 30px; cursor: pointer;
+            font-size: 13px; font-weight: 500; color: #fff;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03));
+            transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+            user-select: none;
+        }
+        .tag-chip:hover {
+            background: linear-gradient(135deg, rgba(102,126,234,0.35), rgba(118,75,162,0.25));
+            border-color: rgba(102,126,234,0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102,126,234,0.25);
+        }
+        .tag-chip.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-color: rgba(255,255,255,0.3);
+            box-shadow: 0 4px 16px rgba(102,126,234,0.5);
+            transform: translateY(-2px);
+        }
+        .tag-chip .tag-count {
+            font-size: 11px; opacity: 0.75;
+            background: rgba(255,255,255,0.15); padding: 1px 6px;
+            border-radius: 10px; margin-left: 4px;
+        }
+        .tag-chip.active .tag-count { background: rgba(255,255,255,0.25); }
+
+        /* ===== RIGHT: CONTENT AREA ===== */
+        .content-area { display: flex; flex-direction: column; gap: 20px; }
+
+        /* ===== PLACEHOLDER ===== */
+        .placeholder {
+            background: rgba(255,255,255,0.04);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border-radius: 24px; padding: 80px 40px;
+            text-align: center;
+            border: 1px dashed rgba(255,255,255,0.12);
+            animation: fadeInUp 0.6s ease-out;
+        }
+        .placeholder i { font-size: 56px; color: rgba(102,126,234,0.5); margin-bottom: 20px; display: block; }
+        .placeholder h3 { color: rgba(255,255,255,0.7); font-size: 20px; margin-bottom: 10px; }
+        .placeholder p { color: rgba(255,255,255,0.4); font-size: 14px; }
+
+        /* ===== ARTIST GRID ===== */
+        .section-header {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 16px; flex-wrap: wrap; gap: 10px;
+        }
+        .section-title {
+            font-size: 20px; font-weight: bold; color: #fff;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .section-title .genre-label {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 4px 14px; border-radius: 20px; font-size: 14px;
+        }
+        .section-hint { font-size: 12px; color: rgba(255,255,255,0.45); }
+
+        .artist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 14px;
+        }
+        .artist-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03));
+            border-radius: 20px; padding: 18px 16px;
+            border: 2px solid rgba(255,255,255,0.08);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            position: relative; overflow: hidden;
+        }
+        .artist-card::before {
+            content: '';
+            position: absolute; inset: 0; border-radius: 18px;
+            background: linear-gradient(135deg, rgba(102,126,234,0.15), rgba(118,75,162,0.1));
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .artist-card:hover::before { opacity: 1; }
+        .artist-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(102,126,234,0.3);
+            border-color: rgba(102,126,234,0.4);
+        }
+        .artist-card.selected {
+            border-color: #4ecdc4;
+            background: linear-gradient(135deg, rgba(78,205,196,0.18), rgba(102,126,234,0.12));
+            box-shadow: 0 6px 22px rgba(78,205,196,0.3);
+        }
+        .artist-card.selected::after {
+            content: '✓';
+            position: absolute; top: 10px; right: 12px;
+            background: #4ecdc4; color: #fff;
+            width: 22px; height: 22px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: bold;
+            display: grid; place-items: center;
+        }
+        .artist-avatar {
+            width: 48px; height: 48px; border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: grid; place-items: center;
+            font-size: 20px; color: #fff; margin-bottom: 12px;
+            font-weight: bold;
+        }
+        .artist-name {
+            font-size: 14px; font-weight: 700; color: #fff;
+            margin-bottom: 10px; white-space: nowrap;
+            overflow: hidden; text-overflow: ellipsis;
+        }
+        .artist-mini-stats { display: flex; flex-wrap: wrap; gap: 6px; }
+        .mini-stat {
+            font-size: 11px; padding: 3px 9px; border-radius: 15px;
+            background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7);
+        }
+        .mini-stat.pop { background: rgba(255,107,107,0.2); color: #ff6b6b; }
+        .mini-stat.val { background: rgba(78,205,196,0.2); color: #4ecdc4; }
+        .mini-stat.ene { background: rgba(243,156,18,0.2); color: #f39c12; }
+
+        /* 查看情绪分析按钮 */
+        .view-analysis-btn {
+            margin-top: 12px;
+            width: 100%;
+            padding: 8px 0;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            position: relative;
+            z-index: 2;
+        }
+        .view-analysis-btn:hover {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.4), rgba(118, 75, 162, 0.4));
+            border-color: rgba(102, 126, 234, 0.5);
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .view-analysis-btn i {
+            font-size: 11px;
+            color: #4ecdc4;
+        }
+
+        /* ===== COMPARE SECTION ===== */
+        .compare-card {
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px; padding: 28px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.08);
+            animation: fadeInUp 0.5s ease-out;
+        }
+        .card-title {
+            font-size: 20px; font-weight: bold; color: #fff; margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid transparent;
+            border-image: linear-gradient(90deg, #667eea, #764ba2, #4ecdc4) 1;
+            display: inline-block;
+        }
+
+        /* ===== RADAR CHART ===== */
+        #radarChart { width: 100%; height: 420px; }
+
+        /* ===== ARTIST STAT TABLE ===== */
+        .stat-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        .stat-table th {
+            text-align: left; padding: 10px 14px;
+            font-size: 12px; color: rgba(255,255,255,0.5);
+            border-bottom: 1px solid rgba(255,255,255,0.08); font-weight: 600;
+        }
+        .stat-table td {
+            padding: 11px 14px; font-size: 13px; color: rgba(255,255,255,0.85);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: background 0.2s;
+        }
+        .stat-table tr:hover td { background: rgba(255,255,255,0.04); }
+        .stat-table td .artist-dot {
+            display: inline-block; width: 10px; height: 10px;
+            border-radius: 50%; margin-right: 8px; vertical-align: middle;
+        }
+        .prog-bar-wrap {
+            height: 6px; background: rgba(255,255,255,0.1);
+            border-radius: 4px; overflow: hidden; width: 120px; display: inline-block;
+            vertical-align: middle;
+        }
+        .prog-bar {
+            height: 100%; border-radius: 4px;
+            transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: rgba(102,126,234,0.5); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(102,126,234,0.7); }
+
+        /* ===== LOADER ===== */
+        .loading-overlay { display: flex; align-items: center; justify-content: center; padding: 60px; }
+        .loader { width: 50px; height: 50px; border: 3px solid rgba(102,126,234,0.3); border-top-color: #667eea; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .error-message { color: #ff6b6b; text-align: center; padding: 40px; background: rgba(255,107,107,0.1); border-radius: 20px; }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            text-align: center; padding: 25px;
+            color: rgba(255,255,255,0.5); font-size: 13px;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+
+        /* ===== GENRE STATS BAR ===== */
+        .genre-stats-bar {
+            background: rgba(255,255,255,0.04);
+            border-radius: 16px; padding: 16px 22px;
+            border: 1px solid rgba(255,255,255,0.06);
+            display: flex; gap: 24px; flex-wrap: wrap; align-items: center;
+            animation: fadeInUp 0.5s ease-out;
+        }
+        .genre-stat-item { text-align: center; }
+        .genre-stat-item .val { font-size: 22px; font-weight: 700; color: #4ecdc4; }
+        .genre-stat-item .lbl { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 960px) {
+            body { padding: 15px; }
+            .header { padding: 25px 20px; }
+            .header h1 { font-size: 24px; }
+            .main-layout { grid-template-columns: 1fr; }
+            .tag-panel { position: static; }
+            #radarChart { height: 340px; }
+            .action-bar { flex-direction: column; align-items: stretch; }
+            .filter-hint { margin-left: 0; justify-content: center; }
+        }
+    </style>
+    <link rel="stylesheet" href="../shared/theme.css">
+</head>
+<body>
+<div class="container">
+
+    <!-- HEADER -->
+    <!--<div class="header">
+        <h1><i class="fa-solid fa-tags" style="color:#4ecdc4; margin-right:10px;"></i>模块三：<span>风格标签图谱</span></h1>
+        <p><i class="fa-solid fa-tag" style="color:#f39c12;"></i> 流派标签筛选 · <i class="fa-solid fa-chart-radar" style="color:#f39c12;"></i> 歌手风格量化对比 · <i class="fa-solid fa-users" style="color:#f39c12;"></i> 同标签歌手横向分析</p>
+    </div>-->
+    <!-- 新顶部 hero-band -->
+<div class="hero-band">
+    <div>
+        <p class="eyebrow">Spotify 音频特征研究</p>
+        <h1>模块三：风格标签图谱</h1>
+        <p class="hero-copy">
+            流派标签筛选 · 歌手风格量化对比 · 同标签歌手横向分析
+        </p>
+    </div>
+    <div class="music-visual" aria-hidden="true">
+        <div class="vinyl-disc"><span></span></div>
+        <div class="wave-bars" id="wave-bars"></div>
+    </div>
+</div>
+
+<!-- 三个统计指标卡片（根据模块三特色定制） -->
+<div class="metric-grid">
+    <div class="metric-card">
+        <span class="metric-icon">🏷️</span>
+        <div><p>流派标签</p><strong id="totalGenresCount">-</strong></div>
+    </div>
+    <div class="metric-card">
+        <span class="metric-icon">🎤</span>
+        <div><p>歌手总数</p><strong id="totalArtistsCount">-</strong></div>
+    </div>
+    <div class="metric-card metric-card-wide">
+        <span class="metric-icon">🔄</span>
+        <div>
+            <p>对比上限</p>
+            <strong>5 位歌手</strong>
+            <small>点选歌手卡片，雷达图实时对比</small>
+        </div>
+    </div>
+</div>
+
+    <!-- ACTION BAR -->
+    <div class="action-bar">
+        <span><i class="fa-solid fa-tag" style="margin-right:6px;"></i>当前标签：</span>
+        <div class="tag-badge" id="currentTagDisplay">
+            <i class="fa-regular fa-circle-question"></i> 未选择
+        </div>
+        <span><i class="fa-solid fa-square-check" style="margin-right:6px;"></i>已选歌手：</span>
+        <div class="compare-count" id="compareCountDisplay">
+            <i class="fa-solid fa-users"></i> 0 / 5 位
+        </div>
+        <button class="action-btn danger" onclick="clearSelection()" id="clearBtn" style="display:none;">
+            <i class="fa-solid fa-rotate-left" style="margin-right:6px;"></i>清空选择
+        </button>
+        <span class="filter-hint">
+            <i class="fa-regular fa-lightbulb"></i> 点击标签 → 浏览歌手 → 勾选歌手 → 查看风格对比
+        </span>
+    </div>
+
+    <!-- MAIN LAYOUT -->
+    <div class="main-layout">
+
+        <!-- LEFT: TAG PANEL -->
+        <div class="tag-panel">
+            <div class="tag-panel-title">
+                <i class="fa-solid fa-layer-group" style="color:#4ecdc4;"></i>
+                流派标签
+            </div>
+            <input type="text" class="tag-search" id="tagSearch" placeholder="🔍 搜索标签..." oninput="filterTags()">
+            <div class="tag-list" id="tagList">
+                <div class="loading-overlay" style="padding:30px;">
+                    <div class="loader"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: CONTENT AREA -->
+        <div class="content-area" id="contentArea">
+            <div class="placeholder">
+                <i class="fa-solid fa-hand-pointer"></i>
+                <h3>请从左侧选择一个流派标签</h3>
+                <p>选择标签后，将展示该流派下所有歌手<br>点击歌手卡片（最多5位）即可查看风格量化对比</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <i class="fa-regular fa-lightbulb"></i>
+        提示：雷达图维度包含愉悦度、能量、流行度、歌曲量、流派多样性 | 最多同时对比 5 位歌手
+    </div>
+
+</div>
+
+<script>
+// ===== GLOBALS =====
+let singerData = null;
+let allArtists = [];
+let genreArtistsMap = {};       // genre -> [artistName, ...]
+let allGenres = [];             // sorted genres
+let currentGenre = null;
+let selectedArtists = [];       // currently selected for comparison (max 5)
+let radarChart = null;
+let radarResizeFrame = 0;
+
+// Color palette for radar series
+const COLORS = ['#4ecdc4','#667eea','#f39c12','#ff6b6b','#a29bfe'];
+
+window.addEventListener('resize', () => {
+    window.cancelAnimationFrame(radarResizeFrame);
+    radarResizeFrame = window.requestAnimationFrame(() => radarChart?.resize());
+});
+
+
+
+// ===== LOAD DATA =====
+async function loadData() {
+    try {
+        const res = await fetch('singer_data.json');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        singerData = await res.json();
+        allArtists = Object.keys(singerData).sort();
+
+        // Build genre -> artists map
+        allArtists.forEach(artist => {
+            const genres = new Set(singerData[artist].all_songs.map(s => s.genre).filter(Boolean));
+            genres.forEach(g => {
+                if (!genreArtistsMap[g]) genreArtistsMap[g] = [];
+                genreArtistsMap[g].push(artist);
+            });
+        });
+        allGenres = Object.keys(genreArtistsMap).sort();
+
+        renderTagList(allGenres);
+        // 更新头部统计卡片
+document.getElementById('totalGenresCount').innerText = allGenres.length;
+document.getElementById('totalArtistsCount').innerText = allArtists.length;
+        console.log(`✅ 加载完成：${allArtists.length} 位歌手，${allGenres.length} 个流派`);
+        // 读取URL参数，自动跳转选中对应流派
+        // 读取URL参数，自动选中流派
+        function getUrlParam(key) {
+            const url = new URL(window.location.href);
+            return url.searchParams.get(key);
+        }
+        const targetGenre = getUrlParam('genre');
+        if (targetGenre && allGenres.includes(targetGenre)) {
+            selectGenre(targetGenre);
+        }
+    } catch (e) {
+        console.error(e);
+        document.getElementById('tagList').innerHTML = `<div class="error-message" style="width:100%;"><i class="fa-solid fa-circle-exclamation"></i><br>数据加载失败，请确认 singer_data.json 存在<br><small style="opacity:.6;">使用 python -m http.server 8080 启动本地服务</small></div>`;
+    }
+}
+
+// ===== ESCAPE HTML =====
+function escapeHtml(t) {
+    if (!t) return '';
+    const d = document.createElement('div');
+    d.textContent = t;
+    return d.innerHTML;
+}
+// 生成动态波浪条（黑胶唱片右侧动画）
+const waveBarsContainer = document.getElementById('wave-bars');
+if (waveBarsContainer) {
+    waveBarsContainer.innerHTML = Array.from({ length: 24 }, (_, i) => `<i style="--level:${18 + ((i * 17) % 58)}"></i>`).join("");
+}
+
+// ===== RENDER TAG LIST =====
+function renderTagList(genres) {
+    const html = genres.map(g => {
+        const count = genreArtistsMap[g]?.length || 0;
+        const isActive = g === currentGenre ? 'active' : '';
+        return `<div class="tag-chip ${isActive}" role="button" tabindex="0">
+                    ${escapeHtml(g)}<span class="tag-count">${count}</span>
+                </div>`;
+    }).join('');
+    const tagList = document.getElementById('tagList');
+    tagList.innerHTML = html || '<div style="color:#6b625f;font-size:13px;padding:10px;">未找到匹配标签</div>';
+    tagList.querySelectorAll('.tag-chip').forEach((el, index) => {
+        const genre = genres[index];
+        el.dataset.genre = genre;
+        el.addEventListener('click', () => selectGenre(genre));
+        el.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                selectGenre(genre);
+            }
+        });
+    });
+}
+
+// ===== FILTER TAGS (search) =====
+function filterTags() {
+    const q = document.getElementById('tagSearch').value.toLowerCase();
+    const filtered = allGenres.filter(g => g.toLowerCase().includes(q));
+    renderTagList(filtered);
+}
+
+// ===== SELECT GENRE =====
+function selectGenre(genre) {
+    currentGenre = genre;
+    selectedArtists = [];
+
+    // Update tag active state
+    document.querySelectorAll('.tag-chip').forEach(el => {
+        el.classList.toggle('active', el.dataset.genre === genre);
+    });
+
+    // Update action bar
+    document.getElementById('currentTagDisplay').innerHTML = `<i class="fa-solid fa-tag"></i> ${escapeHtml(genre)}`;
+    updateCompareCount();
+
+    // Render artists for this genre
+    renderArtistGrid(genre);
+}
+
+// ===== RENDER ARTIST GRID =====
+function renderArtistGrid(genre) {
+    const artists = (genreArtistsMap[genre] || []).sort((a, b) => {
+        return (singerData[b].avg_popularity || 0) - (singerData[a].avg_popularity || 0);
+    });
+
+    if (artists.length === 0) {
+        document.getElementById('contentArea').innerHTML = `
+            <div class="placeholder">
+                <i class="fa-solid fa-face-frown-open"></i>
+                <h3>该标签下暂无歌手</h3>
+                <p>请尝试选择其他流派标签</p>
+            </div>`;
+        return;
+    }
+
+    // Genre overall stats
+    const avgPop = (artists.reduce((s,a) => s + (singerData[a].avg_popularity||0), 0) / artists.length).toFixed(1);
+    const avgVal = (artists.reduce((s,a) => s + (singerData[a].avg_valence||0), 0) / artists.length * 100).toFixed(0);
+    const avgEne = (artists.reduce((s,a) => s + (singerData[a].avg_energy||0), 0) / artists.length * 100).toFixed(0);
+
+    const statsBar = `
+        <div class="genre-stats-bar">
+            <div class="genre-stat-item"><div class="val">${artists.length}</div><div class="lbl">歌手数量</div></div>
+            <div class="genre-stat-item"><div class="val">${avgPop}</div><div class="lbl">平均流行度</div></div>
+            <div class="genre-stat-item"><div class="val">${avgVal}%</div><div class="lbl">平均愉悦度</div></div>
+            <div class="genre-stat-item"><div class="val">${avgEne}%</div><div class="lbl">平均能量</div></div>
+            <div class="genre-stat-item" style="margin-left:auto;"><div class="val" style="font-size:14px;color:#6b625f;">点选歌手卡片（≤5位）开始对比</div><div class="lbl"> </div></div>
+        </div>`;
+
+    const gridHtml = `
+        <div>
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fa-solid fa-users" style="color:#667eea;"></i>
+                    <span class="genre-label">${escapeHtml(genre)}</span> 流派歌手
+                </div>
+                <div class="section-hint">按平均流行度排序 · 共 ${artists.length} 位</div>
+            </div>
+            <div class="artist-grid" id="artistGrid">
+                ${artists.map(a => renderArtistCard(a)).join('')}
+            </div>
+        </div>`;
+
+    const compareHtml = `
+        <div class="compare-card" id="compareSection" style="display:none;">
+            <div class="card-title"><i class="fa-solid fa-chart-radar" style="margin-right:8px;"></i>风格量化对比</div>
+            <div id="radarChart"></div>
+            <div id="statTableWrap"></div>
+        </div>`;
+
+    document.getElementById('contentArea').innerHTML = statsBar + gridHtml + compareHtml;
+}
+
+// ===== RENDER ARTIST CARD =====
+function renderArtistCard(artist) {
+    const info = singerData[artist];
+    const initial = artist.charAt(0).toUpperCase();
+    const isSelected = selectedArtists.includes(artist);
+    const selClass = isSelected ? 'selected' : '';
+    const pop = info.avg_popularity?.toFixed(1) || '—';
+    const val = ((info.avg_valence || 0) * 100).toFixed(0);
+    const ene = ((info.avg_energy  || 0) * 100).toFixed(0);
+    const safeName = escapeHtml(artist).replace(/'/g, "\\'");
+
+    return `
+        <div class="artist-card ${selClass}" id="card_${escapeHtml(artist).replace(/\s/g,'_').replace(/[^a-zA-Z0-9_]/g,'X')}" onclick="toggleArtist('${safeName}')">
+            <div class="artist-avatar">${escapeHtml(initial)}</div>
+            <div class="artist-name" title="${escapeHtml(artist)}">${escapeHtml(artist)}</div>
+            <div class="artist-mini-stats">
+                <span class="mini-stat pop">🔥 ${pop}</span>
+                <span class="mini-stat val">✨ ${val}%</span>
+                <span class="mini-stat ene">⚡ ${ene}%</span>
+            </div>
+            <button class="view-analysis-btn" onclick="viewAnalysis('${safeName}', event)">
+                <i class="fa-solid fa-chart-line"></i> 查看情绪分析
+            </button>
+        </div>`;
+}
+
+// ===== 跳转到模块四 =====
+function viewAnalysis(artistName, event) {
+    event.stopPropagation(); // 阻止触发卡片的选中事件
+    window.location.href = `module4.html?artist=${encodeURIComponent(artistName)}`;
+}
+
+// ===== TOGGLE ARTIST SELECTION =====
+function toggleArtist(artist) {
+    const idx = selectedArtists.indexOf(artist);
+    if (idx >= 0) {
+        selectedArtists.splice(idx, 1);
+    } else {
+        if (selectedArtists.length >= 5) {
+            // Flash a warning on the count badge
+            const badge = document.getElementById('compareCountDisplay');
+            badge.style.borderColor = '#ff6b6b';
+            badge.style.background = 'rgba(255,107,107,0.2)';
+            setTimeout(() => {
+                badge.style.borderColor = '';
+                badge.style.background = '';
+            }, 800);
+            return;
+        }
+        selectedArtists.push(artist);
+    }
+
+    updateCompareCount();
+    refreshArtistGrid();
+    renderCompare();
+}
+
+// ===== REFRESH ARTIST GRID SELECTION STATE =====
+function refreshArtistGrid() {
+    const artists = genreArtistsMap[currentGenre] || [];
+    artists.forEach(a => {
+        const id = 'card_' + escapeHtml(a).replace(/\s/g,'_').replace(/[^a-zA-Z0-9_]/g,'X');
+        const el = document.getElementById(id);
+        if (el) el.className = 'artist-card ' + (selectedArtists.includes(a) ? 'selected' : '');
+    });
+}
+
+// ===== UPDATE COMPARE COUNT =====
+function updateCompareCount() {
+    document.getElementById('compareCountDisplay').innerHTML = `<i class="fa-solid fa-users"></i> ${selectedArtists.length} / 5 位`;
+    document.getElementById('clearBtn').style.display = selectedArtists.length > 0 ? '' : 'none';
+}
+
+// ===== CLEAR SELECTION =====
+function clearSelection() {
+    selectedArtists = [];
+    updateCompareCount();
+    refreshArtistGrid();
+    renderCompare();
+}
+
+// ===== COMPUTE ARTIST RADAR DATA =====
+function getRadarData(artist) {
+    const info = singerData[artist];
+    if (!info) return null;
+
+    // Normalize song_count to 0-100, cap at 200 songs
+    const songCountNorm = Math.min(info.song_count / 200, 1) * 100;
+
+    // Genre diversity: unique genres in artist's all_songs
+    const genreSet = new Set(info.all_songs.map(s => s.genre).filter(Boolean));
+    const genreDiversity = Math.min(genreSet.size / 20, 1) * 100;
+
+    return {
+        valence:   +(info.avg_valence * 100).toFixed(1),
+        energy:    +(info.avg_energy  * 100).toFixed(1),
+        popularity: +info.avg_popularity.toFixed(1),
+        songCount:  +songCountNorm.toFixed(1),
+        diversity:  +genreDiversity.toFixed(1),
+        rawGenres:  genreSet.size,
+        rawSongs:   info.song_count,
+    };
+}
+
+// ===== RENDER COMPARISON RADAR =====
+function renderCompare() {
+    const section = document.getElementById('compareSection');
+    if (!section) return;
+
+    if (selectedArtists.length === 0) {
+        section.style.display = 'none';
+        return;
+    }
+
+    section.style.display = '';
+
+    // ---- Radar Chart ----
+    const chartDom = document.getElementById('radarChart');
+    if (radarChart) { radarChart.dispose(); radarChart = null; }
+
+    const indicator = [
+        { name: '✨ 愉悦度', max: 100 },
+        { name: '⚡ 能量',   max: 100 },
+        { name: '🔥 流行度', max: 100 },
+        { name: '🎵 歌曲量', max: 100 },
+        { name: '🏷️ 流派多样性', max: 100 }
+    ];
+
+    const series = selectedArtists.map((artist, i) => {
+        const d = getRadarData(artist);
+        return {
+            name: artist,
+            value: [d.valence, d.energy, d.popularity, d.songCount, d.diversity]
+        };
+    });
+
+    const option = {
+        backgroundColor: 'transparent',
+        tooltip: {
+            trigger: 'item',
+            formatter: function(params) {
+                const v = params.value;
+                const artist = params.name;
+                const d = getRadarData(artist);
+                return `<div style="padding:10px 14px;background:rgba(0,0,0,0.85);border-radius:10px;">
+                    <strong style="color:#fff;">${escapeHtml(artist)}</strong><br/>
+                    <span style="color:rgba(255,255,255,.7);">✨ 愉悦度：</span><span style="color:#4ecdc4;">${v[0]}%</span><br/>
+                    <span style="color:rgba(255,255,255,.7);">⚡ 能量：</span><span style="color:#f39c12;">${v[1]}%</span><br/>
+                    <span style="color:rgba(255,255,255,.7);">🔥 流行度：</span><span style="color:#ff6b6b;">${d.popularity}</span><br/>
+                    <span style="color:rgba(255,255,255,.7);">🎵 歌曲量：</span><span style="color:#a29bfe;">${d.rawSongs} 首</span><br/>
+                    <span style="color:rgba(255,255,255,.7);">🏷️ 流派数：</span><span style="color:#667eea;">${d.rawGenres} 个</span>
+                </div>`;
+            },
+            backgroundColor: 'transparent', borderWidth: 0, padding: 0
+        },
+        legend: {
+            data: selectedArtists,
+            bottom: 10,
+            textStyle: { color: '#5d4c50', fontSize: 12 },
+            icon: 'circle'
+        },
+        radar: {
+            indicator,
+            center: ['50%', '48%'],
+            radius: '65%',
+            axisName: { color: '#5d4c50', fontSize: 13, fontWeight: 'bold' },
+            splitLine: { lineStyle: { color: 'rgba(255,255,255,0.12)' } },
+            splitArea: { areaStyle: { color: ['rgba(255,255,255,0.03)', 'rgba(255,255,255,0.01)'] } },
+            axisLine: { lineStyle: { color: 'rgba(255,255,255,0.15)' } }
+        },
+        series: [{
+            type: 'radar',
+            data: series.map((s, i) => ({
+                value: s.value,
+                name: s.name,
+                lineStyle: { color: COLORS[i], width: 2 },
+                itemStyle: { color: COLORS[i] },
+                areaStyle: { color: COLORS[i], opacity: 0.12 },
+                symbol: 'circle', symbolSize: 6
+            }))
+        }]
+    };
+
+    radarChart = echarts.init(chartDom);
+    radarChart.setOption(option);
+
+    // ---- Stat Table ----
+    const rows = selectedArtists.map((artist, i) => {
+        const d = getRadarData(artist);
+        const color = COLORS[i];
+        const mkBar = (val, color) =>
+            `<div class="prog-bar-wrap"><div class="prog-bar" style="width:${val}%;background:${color};"></div></div>`;
+        return `<tr>
+            <td><span class="artist-dot" style="background:${color};"></span>${escapeHtml(artist)}</td>
+            <td>${d.valence}% ${mkBar(d.valence, '#4ecdc4')}</td>
+            <td>${d.energy}% ${mkBar(d.energy, '#f39c12')}</td>
+            <td>${d.popularity} ${mkBar(d.popularity, '#ff6b6b')}</td>
+            <td>${singerData[artist].song_count}</td>
+            <td>${getRadarData(artist).rawGenres}</td>
+        </tr>`;
+    }).join('');
+
+    document.getElementById('statTableWrap').innerHTML = `
+        <div style="overflow-x:auto;margin-top:8px;">
+        <table class="stat-table">
+            <thead>
+                <tr>
+                    <th>歌手</th>
+                    <th>愉悦度</th>
+                    <th>能量</th>
+                    <th>流行度</th>
+                    <th>歌曲数</th>
+                    <th>流派数</th>
+                </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+        </table>
+        </div>`;
+}
+
+// ===== INIT =====
+loadData();
+</script>
+    <script src="../shared/nav.js"></script>
+    <script src="../shared/ui.js"></script>
+</body>
+</html>

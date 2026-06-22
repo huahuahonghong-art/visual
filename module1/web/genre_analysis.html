@@ -1,0 +1,877 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音乐流派特征画像 | Spotify 音频特征雷达图</title>
+    <!-- ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #EFF3F6 0%, #E2E8F0 100%);
+            font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, 'PingFang SC', Roboto, sans-serif;
+            padding: 24px;
+            min-height: 100vh;
+        }
+
+        /* 主卡片容器 */
+        .dashboard {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.96);
+            backdrop-filter: blur(0px);
+            border-radius: 32px;
+            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.25), 0 4px 12px rgba(0,0,0,0.05);
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        /* ========== 新顶部样式（参考模块二） ========== */
+        .hero-band {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 390px;
+            align-items: center;
+            gap: 34px;
+            padding: 34px 36px;
+            border-bottom: 2px solid rgba(24, 32, 51, 0.08);
+            background: linear-gradient(100deg, rgba(255, 250, 237, 0.96) 0 56%, rgba(239, 221, 192, 0.92) 56% 100%);
+        }
+        .eyebrow {
+            margin: 0 0 10px;
+            color: #97323d;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0;
+            text-transform: uppercase;
+        }
+        .hero-band h1 {
+            margin: 0;
+            font-size: 44px;
+            line-height: 1.18;
+            color: #111c2f;
+            letter-spacing: -0.5px;
+        }
+        .hero-copy {
+            max-width: 780px;
+            margin: 16px 0 0;
+            color: #4f3d39;
+            font-size: 17px;
+            line-height: 1.75;
+        }
+        .music-visual {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 210px;
+        }
+        .vinyl-disc {
+            position: relative;
+            width: 238px;
+            height: 150px;
+            border-radius: 16px;
+            background:
+                    radial-gradient(circle at 34% 48%, #d7aa3c 0 14px, #111827 15px 27px, transparent 28px),
+                    radial-gradient(circle at 66% 48%, #97323d 0 14px, #111827 15px 27px, transparent 28px),
+                    linear-gradient(0deg, transparent 0 28px, rgba(255, 255, 255, 0.88) 29px 86px, transparent 87px),
+                    repeating-linear-gradient(0deg, #111827 0 5px, #1c2434 6px 8px);
+            box-shadow: 0 24px 38px rgba(32, 16, 16, 0.32);
+            transform: rotate(-10deg);
+        }
+        .vinyl-disc::before {
+            position: absolute;
+            left: 28px;
+            right: 28px;
+            top: 22px;
+            height: 16px;
+            border-radius: 4px;
+            background: #111827;
+            box-shadow:
+                    34px 0 0 #111827,
+                    68px 0 0 #111827,
+                    102px 0 0 #111827,
+                    136px 0 0 #111827;
+            content: "";
+        }
+        .vinyl-disc span {
+            position: absolute;
+            left: 46px;
+            bottom: 18px;
+            width: 146px;
+            height: 28px;
+            border: 2px solid rgba(17, 24, 39, 0.28);
+            border-radius: 3px;
+            background: #fffaf1;
+        }
+        .vinyl-disc span::after {
+            position: absolute;
+            left: 12px;
+            right: 12px;
+            top: 8px;
+            height: 2px;
+            background: rgba(17, 24, 39, 0.22);
+            box-shadow: 0 8px 0 rgba(17, 24, 39, 0.22);
+            content: "";
+        }
+        .wave-bars {
+            position: absolute;
+            right: 0;
+            bottom: 8px;
+            display: flex;
+            align-items: end;
+            gap: 5px;
+            height: 92px;
+            padding: 12px 14px;
+            border: 2px solid rgba(24, 32, 51, 0.12);
+            border-radius: 14px;
+            background: rgba(255, 250, 237, 0.68);
+            backdrop-filter: blur(10px);
+        }
+        .wave-bars i {
+            display: block;
+            width: 5px;
+            height: calc(var(--level) * 1px);
+            border-radius: 999px;
+            background: linear-gradient(180deg, #446a8f, #1f8f7a);
+        }
+
+        /* 指标卡片网格 */
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            margin: 18px 24px 20px 24px;
+        }
+        .metric-card {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            min-height: 96px;
+            padding: 16px 18px;
+            border: 2px solid rgba(24, 32, 51, 0.08);
+            border-radius: 14px;
+            background: rgba(255, 250, 237, 0.82);
+            box-shadow: 0 12px 26px rgba(74, 30, 14, 0.1);
+            backdrop-filter: blur(14px);
+        }
+        .metric-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 42px;
+            height: 42px;
+            padding: 0 9px;
+            border-radius: 12px;
+            color: #ffffff;
+            background: linear-gradient(135deg, #97323d, #d7aa3c);
+            font-size: 20px;
+            font-weight: 800;
+        }
+        .metric-card p {
+            margin: 0 0 4px;
+            color: #6a7a8f;
+            font-size: 14px;
+        }
+        .metric-card strong {
+            display: block;
+            color: #111c2f;
+            font-size: 25px;
+            line-height: 1.16;
+        }
+        .metric-card small {
+            display: block;
+            margin-top: 5px;
+            color: #607085;
+            line-height: 1.45;
+        }
+        .metric-card-wide strong {
+            font-size: 21px;
+        }
+
+        /* 响应式适配 */
+        @media (max-width: 1100px) {
+            .hero-band {
+                grid-template-columns: 1fr;
+            }
+            .metric-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 三列 Flex 布局 - 增强呼吸感 */
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        /* ---------- 左侧选择区（玻璃质感） ---------- */
+        .selector-panel {
+            width: 280px;
+            background: #F9FAFD;
+            border-right: 1px solid rgba(0,0,0,0.06);
+            padding: 24px 20px;
+            transition: all 0.2s;
+        }
+        .selector-panel h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .selected-badge {
+            background: #1DB954;
+            color: white;
+            font-size: 13px;
+            padding: 2px 10px;
+            border-radius: 40px;
+            font-weight: 500;
+        }
+        .search-box {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #E2E8F0;
+            border-radius: 48px;
+            font-size: 14px;
+            font-family: inherit;
+            background: white;
+            transition: all 0.2s;
+            outline: none;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+        .search-box:focus {
+            border-color: #1DB954;
+            box-shadow: 0 0 0 3px rgba(29,185,84,0.2);
+        }
+        .genre-list {
+            max-height: 500px;
+            overflow-y: auto;
+            margin-top: 18px;
+            padding-right: 4px;
+        }
+        .genre-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 14px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            border: 1px solid #EDF2F7;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+        .genre-item:hover {
+            background: #F1F5F9;
+            transform: translateX(5px);
+            border-color: #CBD5E1;
+        }
+        .genre-item.selected {
+            background: #E8F5E9;
+            border-color: #1DB954;
+            box-shadow: 0 4px 8px rgba(29,185,84,0.12);
+        }
+        .genre-item input {
+            margin-right: 14px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #1DB954;
+        }
+        .genre-item label {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            color: #1e293b;
+        }
+        .genre-item .sample-badge {
+            font-size: 11px;
+            font-weight: 500;
+            color: #5e6f8d;
+            background: #F1F5F9;
+            padding: 4px 10px;
+            border-radius: 40px;
+            transition: 0.2s;
+        }
+        .btn-group {
+            margin-top: 24px;
+            display: flex;
+            gap: 12px;
+        }
+        .btn {
+            flex: 1;
+            padding: 10px 0;
+            border: none;
+            border-radius: 48px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+        .btn-primary {
+            background: #1DB954;
+            color: white;
+            box-shadow: 0 2px 6px rgba(29,185,84,0.3);
+        }
+        .btn-primary:hover {
+            background: #0f8b3a;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(29,185,84,0.25);
+        }
+        .btn-secondary {
+            background: #F1F5F9;
+            color: #334155;
+            border: 1px solid #E2E8F0;
+        }
+        .btn-secondary:hover {
+            background: #E2E8F0;
+            transform: translateY(-1px);
+        }
+        .tip-text {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #5f7f9e;
+            text-align: center;
+            background: #EFF3F8;
+            padding: 8px;
+            border-radius: 60px;
+        }
+
+        /* 中间雷达图区 */
+        .chart-panel {
+            flex: 1;
+            min-width: 520px;
+            padding: 24px 20px;
+            background: white;
+        }
+        #radarChart {
+            width: 100%;
+            height: 520px;
+            background: #FFFFFF;
+            border-radius: 28px;
+            transition: all 0.2s;
+        }
+        .chart-note {
+            text-align: center;
+            font-size: 13px;
+            color: #617388;
+            margin-top: 16px;
+            background: #F8FAFE;
+            padding: 8px 16px;
+            border-radius: 60px;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* 右侧信息区（现代卡片） */
+        .info-panel {
+            width: 340px;
+            background: #F9FAFD;
+            border-left: 1px solid rgba(0,0,0,0.05);
+            padding: 24px 20px;
+            overflow-y: auto;
+            max-height: 660px;
+            backdrop-filter: blur(2px);
+        }
+        .info-panel h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #0F172A;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .info-panel h3::before {
+            content: "📋";
+            font-size: 20px;
+        }
+        .active-genre {
+            background: linear-gradient(115deg, #ffffff 0%, #FEFCE8 100%);
+            border-radius: 28px;
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 20px -8px rgba(0,0,0,0.08);
+            border: 1px solid rgba(29,185,84,0.2);
+        }
+        .active-genre h4 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1DB954;
+            margin-bottom: 12px;
+            letter-spacing: -0.3px;
+        }
+        .sample-badge-large {
+            background: #EFF6FF;
+            padding: 5px 12px;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+            margin: 8px 0 16px 0;
+            color: #1e40af;
+        }
+        .feature-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .feature-table td {
+            padding: 10px 2px;
+            border-bottom: 1px solid #E9EEF4;
+        }
+        .feature-table td:first-child {
+            font-weight: 600;
+            color: #1F2A44;
+            width: 100px;
+        }
+        .feature-bar {
+            background: #E2E8F0;
+            border-radius: 40px;
+            height: 8px;
+            overflow: hidden;
+            width: 100%;
+        }
+        .feature-bar-fill {
+            background: #1DB954;
+            height: 100%;
+            border-radius: 40px;
+            width: 0%;
+            transition: width 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        .example-songs {
+            margin-top: 24px;
+        }
+        .example-songs h5 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #0f172a;
+        }
+        .example-songs ul {
+            list-style: none;
+        }
+        .example-songs li {
+            padding: 8px 0;
+            border-bottom: 1px dashed #E2E8F0;
+            font-size: 12px;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .example-songs li::before {
+            content: "🎧";
+            font-size: 12px;
+            opacity: 0.7;
+        }
+        .no-selection {
+            text-align: center;
+            padding: 48px 20px;
+            background: #F1F5F9;
+            border-radius: 32px;
+            color: #5e6f8d;
+            font-weight: 500;
+        }
+
+        /* 滚动条美化 */
+        .genre-list::-webkit-scrollbar,
+        .info-panel::-webkit-scrollbar {
+            width: 5px;
+        }
+        .genre-list::-webkit-scrollbar-track {
+            background: #EFF3F8;
+            border-radius: 10px;
+        }
+        .genre-list::-webkit-scrollbar-thumb {
+            background: #1DB954;
+            border-radius: 10px;
+        }
+
+        /* 响应式 */
+        @media (max-width: 1100px) {
+            .selector-panel { width: 100%; border-right: none; border-bottom: 1px solid #E2E8F0; }
+            .info-panel { width: 100%; border-left: none; border-top: 1px solid #E2E8F0; }
+            .chart-panel { min-width: auto; }
+            .content { flex-direction: column; }
+            body { padding: 16px; }
+        }
+    </style>
+    <link rel="stylesheet" href="../../shared/theme.css">
+</head>
+<body>
+<div class="dashboard">
+    <div class="hero-band">
+        <div>
+            <p class="eyebrow">Spotify 音频特征研究</p>
+            <h1>音乐流派特征画像分析</h1>
+            <p class="hero-copy">
+                基于 Spotify 音频特征 · 雷达图可视化 · 对比所有流派的性格指纹
+            </p>
+        </div>
+        <div class="music-visual" aria-hidden="true">
+            <div class="vinyl-disc"><span></span></div>
+            <div class="wave-bars" id="wave-bars"></div>
+        </div>
+    </div>
+    <!-- 三个统计指标卡片（动态显示流派数量） -->
+    <div class="metric-grid">
+        <div class="metric-card">
+            <span class="metric-icon">🎛️</span>
+            <div><p>核心音频特征</p><strong>8 项</strong></div>
+        </div>
+        <div class="metric-card">
+            <span class="metric-icon">🏆</span>
+            <div><p>主要音乐流派</p><strong id="totalGenresCount">-</strong></div>
+        </div>
+        <div class="metric-card metric-card-wide">
+            <span class="metric-icon">🖱️</span>
+            <div>
+                <p>交互功能</p>
+                <strong>多选对比 & 高亮</strong>
+                <small>点击曲线高亮，多选对比雷达面积</small>
+            </div>
+        </div>
+    </div>
+    <div class="content">
+        <!-- 左侧选择区 -->
+        <div class="selector-panel">
+            <h3><span>🎚️ 流派选择</span><span class="selected-badge" id="selectedCount">0</span></h3>
+            <input type="text" class="search-box" id="searchInput" placeholder="🔍 搜索流派...">
+            <div class="genre-list" id="genreList"></div>
+            <div class="btn-group">
+                <button class="btn btn-primary" id="selectAllBtn">✨ 全选</button>
+                <button class="btn btn-secondary" id="clearAllBtn">🗑️ 清空</button>
+            </div>
+            <div class="tip-text">
+                💡 点击流派曲线高亮 | 多选对比雷达面积
+            </div>
+        </div>
+
+        <!-- 中间雷达图区 -->
+        <div class="chart-panel">
+            <div id="radarChart" style="width: 100%; height: 520px;"></div>
+            <div class="chart-note">
+                ⭐ 数据标准化至 [0,1] 区间 | 雷达面积越大 = 综合特征越显著
+            </div>
+        </div>
+
+        <!-- 右侧信息区 -->
+        <div class="info-panel" id="infoPanel">
+            <h3>特征数值详情</h3>
+            <div class="no-selection">
+                👈 从左侧选择一个流派查看详细指纹
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="genre_analysis_data.js"></script>
+<script>
+    // ==================== 全局变量 ====================
+    let allGenres = SPOTIFY_DATA;
+    let selectedGenres = [];      // 当前选中的流派名称列表
+    let chart = null;
+    let currentHighlight = null;   // 当前高亮的流派名称
+    const RADAR_FEATURE_LABELS = {
+        danceability: '舞蹈性', energy: '能量', valence: '愉悦度',
+        acousticness: '声学度', instrumentalness: '器乐度',
+        speechiness: '言语度', liveness: '现场感', tempo: '节奏感'
+    };
+
+    // 柔和高级配色 (保留Spotify绿为主，增加差异度)
+    const colorPalette = [
+        '#1DB954', '#FF6B6B', '#4C9AFF', '#FFB347', '#9B59B6',
+        '#2DCCD3', '#FF8C42', '#3CB371', '#E84342', '#5D9BEC',
+        '#F4A261', '#6C5B7B', '#88B04B', '#FF9F4A', '#6FCF97'
+    ];
+
+    function getColorForGenre(genreName, index) {
+        const idx = allGenres.findIndex(g => g.name === genreName);
+        return colorPalette[idx % colorPalette.length];
+    }
+
+    function updateSelectedCount() {
+        document.getElementById('selectedCount').innerText = selectedGenres.length;
+    }
+
+    // 渲染左侧流派列表 (保持筛选)
+    function renderGenreList(filterText = '') {
+        const container = document.getElementById('genreList');
+        const filtered = filterText ? allGenres.filter(g => g.name.toLowerCase().includes(filterText.toLowerCase())) : allGenres;
+
+        container.innerHTML = filtered.map((genre, idx) => {
+            const isSelected = selectedGenres.includes(genre.name);
+            return `
+                <div class="genre-item ${isSelected ? 'selected' : ''}" data-genre="${genre.name}">
+                    <input type="checkbox" ${isSelected ? 'checked' : ''} data-genre="${genre.name}">
+                    <label>${genre.name}</label>
+                    <span class="sample-badge">${genre.sample_count}</span>
+                </div>
+            `;
+        }).join('');
+
+        document.querySelectorAll('.genre-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                if (e.target.tagName !== 'INPUT') {
+                    const cb = item.querySelector('input');
+                    cb.checked = !cb.checked;
+                    const genreName = cb.dataset.genre;
+                    if (cb.checked) {
+                        if (!selectedGenres.includes(genreName)) selectedGenres.push(genreName);
+                    } else {
+                        selectedGenres = selectedGenres.filter(g => g !== genreName);
+                    }
+                    updateSelectedCount();
+                    renderGenreList(document.getElementById('searchInput').value);
+                    updateRadarChart();
+                }
+            });
+            item.querySelector('input').addEventListener('change', (e) => {
+                e.stopPropagation();
+                const genreName = e.target.dataset.genre;
+                if (e.target.checked) {
+                    if (!selectedGenres.includes(genreName)) selectedGenres.push(genreName);
+                } else {
+                    selectedGenres = selectedGenres.filter(g => g !== genreName);
+                }
+                updateSelectedCount();
+                updateRadarChart();
+            });
+        });
+    }
+
+    // 更新右侧信息面板
+    function updateInfoPanel() {
+        const panel = document.getElementById('infoPanel');
+        if (selectedGenres.length === 0) {
+            panel.innerHTML = `
+                <h3>特征数值详情</h3>
+                <div class="no-selection">🎯 从左侧选择一个流派查看详细指纹</div>
+            `;
+            return;
+        }
+
+        const displayGenre = currentHighlight && selectedGenres.includes(currentHighlight) ? currentHighlight : selectedGenres[0];
+        const genreData = allGenres.find(g => g.name === displayGenre);
+        if (!genreData) return;
+
+        const features = FEATURES;
+        const featureNames = {
+            'danceability': '💃 舞蹈性', 'energy': '⚡ 能量', 'valence': '😊 愉悦度',
+            'acousticness': '🎸 声学度', 'instrumentalness': '🎻 器乐度',
+            'speechiness': '🎤 言语度', 'liveness': '🎪 现场感', 'tempo': '⏱️ 节奏感'
+        };
+
+        let tableRows = '';
+        for (let f of features) {
+            const rawValue = genreData.features[f];
+            const normValue = genreData.normalized_features[f];
+            const percent = (normValue * 100).toFixed(1);
+            tableRows += `
+                <tr>
+                    <td>${featureNames[f] || f}</td>
+                    <td style="font-family: monospace;">${rawValue.toFixed(3)}</td>
+                    <td style="width: 120px;">
+                        <div class="feature-bar"><div class="feature-bar-fill" style="width: ${percent}%;"></div></div>
+                        <span style="font-size: 10px; color:#2C3E50;">${percent}%</span>
+                    </td>
+                </tr>
+            `;
+        }
+
+        panel.innerHTML = `
+            <h3>🎯 特征数值详情</h3>
+            <div class="active-genre">
+                <h4>${genreData.name}</h4>
+                <div class="sample-badge-large">📊 样本量: ${genreData.sample_count} 首歌曲</div>
+                <table class="feature-table">
+                    <tbody>${tableRows}</tbody>
+                </table>
+                <div class="example-songs">
+                    <h5>🎧 热门歌曲示例</h5>
+                    <ul>
+                        ${genreData.example_songs.map(song => `<li>${song}</li>`).join('')}
+                    </ul>
+                </div>
+                <div style="margin-top: 16px; font-size: 11px; color: #1DB954; text-align:center;">
+                    💡 悬浮雷达轴查看特征说明
+                </div>
+            </div>
+        `;
+    }
+
+    // 雷达图核心
+    function updateRadarChart() {
+        if (!chart) return;
+
+        const indicators = FEATURES.map(f => ({
+            name: RADAR_FEATURE_LABELS[f] || f,
+            max: 1,
+            min: 0
+        }));
+
+        const series = selectedGenres.map((genre, idx) => {
+            const genreData = allGenres.find(g => g.name === genre);
+            const values = FEATURES.map(f => genreData.normalized_features[f]);
+            return {
+                name: genre,
+                type: 'radar',
+                data: [{ value: values, name: genre }],
+                symbol: 'circle',
+                symbolSize: 6,
+                lineStyle: { width: 2.5, color: getColorForGenre(genre, idx) },
+                areaStyle: { opacity: 0.2, color: getColorForGenre(genre, idx) },
+                emphasis: { scale: 1.1, label: { show: true, formatter: '{b}' } }
+            };
+        });
+
+        const option = {
+            tooltip: { trigger: 'item', backgroundColor: 'rgba(20,20,30,0.9)', borderColor: '#1DB954', borderWidth: 1 },
+            legend: { data: selectedGenres, orient: 'vertical', left: 'left', top: 'middle', textStyle: { color: '#2C3E50', fontWeight: 500 } },
+            radar: {
+                indicator: indicators,
+                center: ['50%', '50%'],
+                radius: '65%',
+                name: { textStyle: { fontSize: 11, fontWeight: 'bold', color: '#2C3E50' } },
+                splitArea: { areaStyle: { color: ['rgba(29,185,84,0.03)', 'rgba(29,185,84,0.08)'] } },
+                axisLine: { lineStyle: { color: '#CBD5E1' } }
+            },
+            series: series
+        };
+
+        chart.setOption(option, true);
+
+        chart.off('click');
+        /*chart.on('click', (params) => {
+            if (params.componentType === 'series' && params.seriesName) {
+                if (currentHighlight === params.seriesName) {
+                    currentHighlight = null;
+                } else {
+                    currentHighlight = params.seriesName;
+                }
+                highlightGenre(currentHighlight);
+                updateInfoPanel();
+            }
+        });*/
+        chart.on('click', (params) => {
+            if (params.componentType === 'series' && params.seriesName) {
+                if (currentHighlight === params.seriesName) {
+                    currentHighlight = null;
+                } else {
+                    currentHighlight = params.seriesName;
+                    // 修正适配你目录的跳转路径
+                    const targetGenre = params.seriesName;
+                    const jumpUrl = `../../module3and4/module3.html?genre=${encodeURIComponent(targetGenre)}`;
+                    console.log("跳转地址：", jumpUrl);
+                    window.location.href = jumpUrl;
+                }
+                highlightGenre(currentHighlight);
+                updateInfoPanel();
+            }
+        });
+
+        chart.off('mousemove');
+        chart.on('mousemove', (params) => {
+            if (params.targetType === 'axisName' && params.target) {
+                const axisName = params.target;
+                const description = FEATURE_DESCRIPTIONS[axisName] || `${axisName} 特征值`;
+                chart.setOption({
+                    tooltip: { formatter: `📌 ${axisName} : ${description}` }
+                });
+            }
+        });
+    }
+
+    function highlightGenre(genreName) {
+        if (!chart) return;
+        const series = selectedGenres.map((genre, idx) => {
+            const genreData = allGenres.find(g => g.name === genre);
+            const values = FEATURES.map(f => genreData.normalized_features[f]);
+            const isHighlight = genreName === genre;
+            return {
+                name: genre,
+                type: 'radar',
+                data: [{ value: values, name: genre }],
+                symbol: 'circle',
+                symbolSize: isHighlight ? 8 : 4,
+                lineStyle: { width: isHighlight ? 3.5 : 1.8, color: getColorForGenre(genre, idx) },
+                areaStyle: { opacity: isHighlight ? 0.3 : 0.1, color: getColorForGenre(genre, idx) }
+            };
+        });
+        chart.setOption({ series: series }, false);
+    }
+
+    // 生成动态波浪条（黑胶唱片右侧动画）
+    (function initWaveBars() {
+        const container = document.getElementById('wave-bars');
+        if (container) {
+            container.innerHTML = Array.from({ length: 24 }, (_, i) => `<i style="--level:${18 + ((i * 17) % 58)}"></i>`).join("");
+        }
+    })();
+
+    function init() {
+        // 更新顶部卡片显示实际流派数量
+        document.getElementById('totalGenresCount').innerText = allGenres.length;
+
+        selectedGenres = allGenres.slice(0, 3).map(g => g.name);
+        updateSelectedCount();
+        renderGenreList('');
+
+        const dom = document.getElementById('radarChart');
+        chart = echarts.init(dom);
+        const indicators = FEATURES.map(f => ({ name: RADAR_FEATURE_LABELS[f] || f, max: 1, min: 0 }));
+        chart.setOption({
+            tooltip: { trigger: 'item' },
+            legend: { data: selectedGenres, orient: 'vertical', left: 'left' },
+            radar: { indicator: indicators, center: ['50%', '50%'], radius: '65%' },
+            series: []
+        });
+
+        updateRadarChart();
+        updateInfoPanel();
+
+        document.getElementById('selectAllBtn').addEventListener('click', () => {
+            selectedGenres = allGenres.map(g => g.name);
+            updateSelectedCount();
+            renderGenreList(document.getElementById('searchInput').value);
+            updateRadarChart();
+            updateInfoPanel();
+        });
+        document.getElementById('clearAllBtn').addEventListener('click', () => {
+            selectedGenres = [];
+            currentHighlight = null;
+            updateSelectedCount();
+            renderGenreList(document.getElementById('searchInput').value);
+            updateRadarChart();
+            updateInfoPanel();
+        });
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            renderGenreList(e.target.value);
+        });
+
+        let resizeFrame = 0;
+        window.addEventListener('resize', () => {
+            window.cancelAnimationFrame(resizeFrame);
+            resizeFrame = window.requestAnimationFrame(() => chart && chart.resize());
+        });
+    }
+
+    init();
+</script>
+<script src="../../shared/nav.js"></script>
+<script src="../../shared/ui.js"></script>
+</body>
+</html>

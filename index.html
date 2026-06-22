@@ -1,0 +1,109 @@
+﻿<!--
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>音律图谱 · Spotify Rhythm Atlas</title>
+  <meta http-equiv="refresh" content="0; url=./module1/web/genre_analysis.html">
+  <link rel="stylesheet" href="./shared/theme.css">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Inter, "Microsoft YaHei", sans-serif; }
+    .atlas-home { width: min(1380px, calc(100% - 40px)); margin: 0 auto; padding: 32px 0 54px; }
+    .atlas-hero { display:grid; grid-template-columns:1fr 360px; align-items:center; gap:28px; padding:38px; border:1px solid var(&#45;&#45;line); border-radius:22px; background:linear-gradient(100deg,rgba(255,250,237,.95),rgba(239,221,192,.92)); box-shadow:var(&#45;&#45;shadow); }
+    .atlas-hero .eyebrow { color:var(&#45;&#45;wine); font-weight:800; }
+    .atlas-hero h1 { margin:8px 0 14px; color:var(&#45;&#45;ink); font-size:52px; }
+    .atlas-hero p { color:#5d4c50; line-height:1.8; }
+    .cassette { width:250px; height:154px; margin:auto; border-radius:15px; background:radial-gradient(circle at 34% 48%,#d7aa3c 0 14px,#111827 15px 27px,transparent 28px),radial-gradient(circle at 66% 48%,#97323d 0 14px,#111827 15px 27px,transparent 28px),linear-gradient(0deg,transparent 0 28px,rgba(255,255,255,.88) 29px 86px,transparent 87px),repeating-linear-gradient(0deg,#111827 0 5px,#1c2434 6px 8px); box-shadow:0 24px 38px rgba(32,16,16,.28); transform:rotate(-8deg); }
+    .atlas-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; margin-top:20px; }
+    .atlas-card { display:block; min-height:180px; padding:22px; border:1px solid var(&#45;&#45;line); border-radius:16px; color:var(&#45;&#45;ink); background:rgba(255,250,237,.9); box-shadow:0 14px 30px rgba(74,30,14,.1); text-decoration:none; transition:.2s ease; }
+    .atlas-card:hover { transform:translateY(-4px); border-color:rgba(151,50,61,.5); }
+    .atlas-card span { color:var(&#45;&#45;wine); font-size:13px; font-weight:800; }
+    .atlas-card h2 { margin:14px 0 10px; font-size:24px; }
+    .atlas-card p { margin:0; color:#5d4c50; line-height:1.65; }
+    @media(max-width:900px){.atlas-hero,.atlas-grid{grid-template-columns:1fr}.atlas-hero h1{font-size:38px}}
+  </style>
+</head>
+<body>
+  <main class="atlas-home">
+    <section class="atlas-hero">
+      <div><div class="eyebrow">Spotify Music Data Visualization</div><h1>音律图谱</h1><p>从流派画像、歌曲流行度、艺术家风格、音乐情绪空间与音频特征关联五个维度，探索 Spotify 音乐数据背后的结构与倾向。</p></div>
+      <div class="cassette" aria-hidden="true"></div>
+    </section>
+    <section class="atlas-grid">
+      <a class="atlas-card" href="./module1/web/genre_analysis.html"><span>MODULE 01</span><h2>音乐流派特征画像</h2><p>对比不同流派的音频特征，观察音乐类型之间的风格差异。</p></a>
+      <a class="atlas-card" href="./moudule2/module2.html"><span>MODULE 02</span><h2>歌曲流行度影响因素</h2><p>分析热门歌曲的音频画像、相关方向与流行度分组差异。</p></a>
+      <a class="atlas-card" href="./module3and4/module3.html"><span>MODULE 03</span><h2>艺术家风格量化</h2><p>通过多维音频指标刻画艺术家风格，并支持对比探索。</p></a>
+      <a class="atlas-card" href="./module3and4/module4.html"><span>MODULE 04</span><h2>音乐情绪空间</h2><p>以愉悦度与能量构建音乐情绪坐标，探索歌曲分布结构。</p></a>
+      <a class="atlas-card" href="./module5/module5.html"><span>MODULE 05</span><h2>核心音频特征关联</h2><p>观察关键音频特征之间的关联关系与三维空间分布。</p></a>
+    </section>
+  </main>
+  <script src="./shared/nav.js"></script>
+  <script src="./shared/ui.js"></script>
+</body>
+</html>
+-->
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>音律图谱 · Spotify Rhythm Atlas</title>
+  <!-- 0秒跳转至模块一 -->
+  <meta http-equiv="refresh" content="0; url=./module1/web/genre_analysis.html">
+  <link rel="stylesheet" href="./shared/theme.css">
+</head>
+<body>
+<!-- 清空所有hero、卡片导览内容，只保留公用脚本 -->
+<script src="./shared/nav.js"></script>
+<script src="./shared/ui.js"></script>
+</body>
+</html>(function () {
+const path = location.pathname.replace(/\\/g, "/").toLowerCase();
+let current = "module1";
+if (path.includes("genre_analysis.html")) current = "module1";
+else if (path.includes("module2.html")) current = "module2";
+else if (path.includes("module3.html")) current = "module3";
+else if (path.includes("module4.html")) current = "module4";
+else if (path.includes("module5.html")) current = "module5";
+else if (path.includes("recommend.html")) current = "recommend";
+
+document.body.classList.add("spotify-unified", `spotify-${current}`);
+
+const root = current === "module1" ? "../../"
+: "../";
+
+// 已彻底移除总览home条目，保留你的 moudule2 原名
+const links = [
+["module1", "模块一 流派画像", `${root}module1/web/genre_analysis.html`],
+["module2", "模块二 流行度", `${root}moudule2/module2.html`],
+["module3", "模块三 艺术家", `${root}module3and4/module3.html`],
+["module4", "模块四 情绪空间", `${root}module3and4/module4.html`],
+["module5", "模块五 特征关联", `${root}module5/module5.html`],
+];
+
+const nav = document.createElement("nav");
+nav.className = "spotify-site-nav";
+nav.innerHTML = `
+<a class="spotify-site-brand" href="${root}module1/web/genre_analysis.html">音律图谱 · Spotify Rhythm Atlas</a>
+<div class="spotify-site-links">
+  ${links.map(([key, label, href]) => `<a class="${current === key ? "active" : ""}" href="${href}">${label}</a>`).join("")}
+</div>
+`;
+document.body.prepend(nav);
+
+const recommendEntry = document.createElement("a");
+recommendEntry.className = `spotify-recommend-entry${current === "recommend" ? " active" : ""}`;
+recommendEntry.href = `${root}recommend/recommend.html`;
+recommendEntry.setAttribute("aria-label", "推荐几首");
+recommendEntry.innerHTML = `
+<span class="spotify-recommend-mascot" aria-hidden="true">
+      <img src="${root}shared/recommend-icon.png" alt="">
+    </span>
+<span class="spotify-recommend-text">推荐几首</span>
+`;
+document.body.append(recommendEntry);
+})();

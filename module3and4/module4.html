@@ -1,0 +1,1300 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>模块四：音乐情绪空间 | 统统可视化</title>
+    <!-- Font Awesome 6 图标库 -->
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- ECharts 核心库 -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            padding: 25px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* 背景装饰 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 50% 50%, rgba(78, 205, 196, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 头部 */
+        <!--.header {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 35px 40px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }-->
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header h1 {
+            font-size: 32px;
+            color: #fff;
+            margin-bottom: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .header h1 span {
+            background: linear-gradient(135deg, #667eea, #764ba2, #4ecdc4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            background-size: 200% 200%;
+            animation: gradientShift 3s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 15px;
+            letter-spacing: 0.5px;
+        }
+        /* ========== 新顶部样式（模块二风格） ========== */
+.hero-band {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 390px;
+    align-items: center;
+    gap: 34px;
+    padding: 34px 36px;
+    border-radius: 24px;
+    margin-bottom: 20px;
+    background: rgba(255, 250, 237, 0.95);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+.eyebrow {
+    margin: 0 0 10px;
+    color: #97323d;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+.hero-band h1 {
+    margin: 0;
+    font-size: 44px;
+    line-height: 1.18;
+    color: #111c2f;
+    letter-spacing: -0.5px;
+}
+.hero-copy {
+    max-width: 780px;
+    margin: 16px 0 0;
+    color: #4f3d39;
+    font-size: 17px;
+    line-height: 1.75;
+}
+.music-visual {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 210px;
+}
+.vinyl-disc {
+    position: relative;
+    width: 238px;
+    height: 150px;
+    border-radius: 16px;
+    background:
+        radial-gradient(circle at 34% 48%, #d7aa3c 0 14px, #111827 15px 27px, transparent 28px),
+        radial-gradient(circle at 66% 48%, #97323d 0 14px, #111827 15px 27px, transparent 28px),
+        linear-gradient(0deg, transparent 0 28px, rgba(255, 255, 255, 0.88) 29px 86px, transparent 87px),
+        repeating-linear-gradient(0deg, #111827 0 5px, #1c2434 6px 8px);
+    box-shadow: 0 24px 38px rgba(32, 16, 16, 0.32);
+    transform: rotate(-10deg);
+}
+.vinyl-disc::before {
+    position: absolute;
+    left: 28px;
+    right: 28px;
+    top: 22px;
+    height: 16px;
+    border-radius: 4px;
+    background: #111827;
+    box-shadow:
+        34px 0 0 #111827,
+        68px 0 0 #111827,
+        102px 0 0 #111827,
+        136px 0 0 #111827;
+    content: "";
+}
+.vinyl-disc span {
+    position: absolute;
+    left: 46px;
+    bottom: 18px;
+    width: 146px;
+    height: 28px;
+    border: 2px solid rgba(17, 24, 39, 0.28);
+    border-radius: 3px;
+    background: #fffaf1;
+}
+.vinyl-disc span::after {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    top: 8px;
+    height: 2px;
+    background: rgba(17, 24, 39, 0.22);
+    box-shadow: 0 8px 0 rgba(17, 24, 39, 0.22);
+    content: "";
+}
+.wave-bars {
+    position: absolute;
+    right: 0;
+    bottom: 8px;
+    display: flex;
+    align-items: end;
+    gap: 5px;
+    height: 92px;
+    padding: 12px 14px;
+    border: 2px solid rgba(24, 32, 51, 0.12);
+    border-radius: 14px;
+    background: rgba(255, 250, 237, 0.68);
+    backdrop-filter: blur(10px);
+}
+.wave-bars i {
+    display: block;
+    width: 5px;
+    height: calc(var(--level) * 1px);
+    border-radius: 999px;
+    background: linear-gradient(180deg, #446a8f, #1f8f7a);
+}
+
+/* 指标卡片网格 */
+.metric-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin: 0 0 20px 0;
+}
+.metric-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 96px;
+    padding: 16px 18px;
+    border: 2px solid rgba(24, 32, 51, 0.08);
+    border-radius: 14px;
+    background: rgba(255, 250, 237, 0.85);
+    backdrop-filter: blur(14px);
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.15);
+}
+.metric-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 42px;
+    height: 42px;
+    padding: 0 9px;
+    border-radius: 12px;
+    color: #ffffff;
+    background: linear-gradient(135deg, #97323d, #d7aa3c);
+    font-size: 20px;
+    font-weight: 800;
+}
+.metric-card p {
+    margin: 0 0 4px;
+    color: #6a7a8f;
+    font-size: 14px;
+}
+.metric-card strong {
+    display: block;
+    color: #111c2f;
+    font-size: 25px;
+    line-height: 1.16;
+}
+.metric-card small {
+    display: block;
+    margin-top: 5px;
+    color: #607085;
+    line-height: 1.45;
+}
+.metric-card-wide strong {
+    font-size: 21px;
+}
+
+/* 响应式适配 */
+@media (max-width: 900px) {
+    .hero-band {
+        grid-template-columns: 1fr;
+        padding: 24px 20px;
+    }
+    .hero-band h1 {
+        font-size: 28px;
+    }
+    .metric-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+        /* 操作栏 */
+        .action-bar {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 16px 30px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .action-bar span {
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 14px;
+        }
+
+        .select-btn {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.3));
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 12px 28px;
+            border-radius: 30px;
+            cursor: pointer;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .select-btn:hover {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.5), rgba(118, 75, 162, 0.5));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            border-color: rgba(102, 126, 234, 0.5);
+        }
+
+        .artist-info-badge {
+            background: rgba(102, 126, 234, 0.2);
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .artist-info-badge i {
+            color: #4ecdc4;
+            margin-right: 6px;
+        }
+
+        .filter-hint {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: auto;
+        }
+
+        /* 流派筛选下拉框 */
+        .genre-select {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 10px 20px;
+            border-radius: 30px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .genre-select:hover {
+            border-color: rgba(102, 126, 234, 0.5);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .genre-select option {
+            background: #1a1a2e;
+            color: #fff;
+        }
+
+        /* 两列布局 */
+        .two-columns {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 25px;
+            margin-bottom: 25px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* 卡片通用样式 */
+        .card {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid transparent;
+            border-image: linear-gradient(90deg, #667eea, #764ba2, #4ecdc4) 1;
+            display: inline-block;
+        }
+
+        /* 歌曲列表 */
+        .song-list {
+            max-height: 500px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+
+        .song-item {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 4px solid #667eea;
+        }
+
+        .song-item:hover {
+            transform: translateX(5px);
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.08));
+            border-left-color: #4ecdc4;
+        }
+
+        .song-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .song-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 12px;
+        }
+
+        .song-stats span {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 5px 12px;
+            border-radius: 20px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .popularity-high {
+            background: rgba(255, 107, 107, 0.3) !important;
+            color: #ff6b6b !important;
+        }
+
+        /* 图表容器 */
+        #emotionChart {
+            width: 100%;
+            height: 450px;
+            margin-top: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 10px;
+        }
+
+        /* 四象限图例 */
+        .quadrant-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .quadrant-item {
+            font-size: 12px;
+            padding: 6px 14px;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* 歌手选择面板 */
+        .selector-panel {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .selector-panel h3 {
+            color: #fff;
+            margin-bottom: 25px;
+            font-size: 24px;
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 14px 20px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.08);
+            font-size: 15px;
+            color: #fff;
+            outline: none;
+            transition: all 0.3s ease;
+            margin-bottom: 25px;
+        }
+
+        .search-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .artist-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .artist-btn {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.3));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px 24px;
+            border-radius: 40px;
+            cursor: pointer;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .artist-btn:hover {
+            transform: translateY(-3px);
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.5), rgba(118, 75, 162, 0.5));
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        /* 统计信息卡片 */
+        .stats-card {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(15px);
+            border-radius: 16px;
+            padding: 18px 25px;
+            margin-bottom: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .stats-card p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+
+        .stats-card strong {
+            color: #4ecdc4;
+            font-size: 18px;
+        }
+
+        /* 流行度滑块 */
+        .popularity-slider {
+            width: 100%;
+            margin: 10px 0;
+            -webkit-appearance: none;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            height: 6px;
+            outline: none;
+        }
+
+        .popularity-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #4ecdc4;
+            cursor: pointer;
+            border: none;
+        }
+
+        .popularity-slider::-webkit-slider-thumb:hover {
+            background: #ff6b6b;
+            transform: scale(1.2);
+        }
+
+        /* 加载状态 */
+        .loading-overlay {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
+        }
+
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(102, 126, 234, 0.3);
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            color: #ff6b6b;
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 107, 107, 0.1);
+            border-radius: 20px;
+            margin: 20px;
+        }
+
+        /* 底部 */
+        .footer {
+            text-align: center;
+            padding: 25px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* 滚动条 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(102, 126, 234, 0.5);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(102, 126, 234, 0.7);
+        }
+
+        /* 响应式 */
+        @media (max-width: 900px) {
+            body { padding: 15px; }
+            .header { padding: 25px 20px; }
+            .header h1 { font-size: 24px; }
+            .two-columns { grid-template-columns: 1fr; }
+            .card { padding: 20px; }
+            #emotionChart { height: 380px; }
+            .action-bar { flex-direction: column; align-items: stretch; }
+            .filter-hint { margin-left: 0; justify-content: center; }
+            .genre-select { width: 100%; }
+        }
+    </style>
+    <link rel="stylesheet" href="../shared/theme.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <!--<div class="header">
+            <h1><i class="fa-regular fa-face-smile" style="color: #4ecdc4; margin-right: 10px;"></i>模块四：<span>音乐情绪空间</span></h1>
+            <p><i class="fa-regular fa-star" style="color: #f39c12;"></i> 愉悦度 (Valence) · <i class="fa-solid fa-bolt" style="color: #f39c12;"></i> 能量 (Energy) | 四象限情绪分类 · 歌手歌曲情绪分布</p>
+        </div>-->
+        <!-- 新顶部 hero-band -->
+<div class="hero-band">
+    <div>
+        <p class="eyebrow">Spotify 音频特征研究</p>
+        <h1>模块四：音乐情绪空间</h1>
+        <p class="hero-copy">
+            愉悦度 (Valence) · 能量 (Energy) | 四象限情绪分类 · 歌手歌曲情绪分布
+        </p>
+    </div>
+    <div class="music-visual" aria-hidden="true">
+        <div class="vinyl-disc"><span></span></div>
+        <div class="wave-bars" id="wave-bars"></div>
+    </div>
+</div>
+
+<!-- 三个统计指标卡片（数据动态更新） -->
+<div class="metric-grid">
+    <div class="metric-card">
+        <span class="metric-icon">🎤</span>
+        <div><p>歌手总数</p><strong id="totalArtistsCount">-</strong></div>
+    </div>
+    <div class="metric-card">
+        <span class="metric-icon">🏷️</span>
+        <div><p>流派总数</p><strong id="totalGenresCount">-</strong></div>
+    </div>
+    <div class="metric-card metric-card-wide">
+        <span class="metric-icon">🎵</span>
+        <div>
+            <p>歌曲总量</p>
+            <strong id="totalSongsCount">-</strong>
+            <small>基于 singer_data.json</small>
+        </div>
+    </div>
+</div>
+
+        <!-- 操作栏 -->
+        <div class="action-bar">
+            <span><i class="fa-solid fa-filter" style="margin-right: 6px;"></i>歌手流派筛选：</span>
+            <select id="genreFilter" class="genre-select">
+                <option value="all">🎵 全部流派</option>
+            </select>
+            <span><i class="fa-solid fa-microphone" style="margin-right: 6px;"></i>当前歌手：</span>
+            <div class="artist-info-badge" id="currentArtistDisplay">
+                <i class="fa-regular fa-circle-question"></i> 未选择
+            </div>
+            <button class="select-btn" onclick="showArtistSelector()">
+                <i class="fa-solid fa-users" style="margin-right: 8px;"></i>选择歌手
+            </button>
+            <span class="filter-hint">
+                数据来源: singer_data.json
+            </span>
+        </div>
+
+        <!-- 动态主内容 -->
+        <div id="mainContent">
+            <div class="loading-overlay">
+                <div class="loader"></div>
+            </div>
+        </div>
+
+        <!-- 底部 -->
+        <div class="footer">
+            <span><i class="fa-regular fa-lightbulb"></i> 提示：橙色点为代表歌曲 | 鼠标悬停显示歌曲详情 | 四象限 = 情绪分类 | 拖动滑块筛选流行度</span>
+        </div>
+    </div>
+
+    <script>
+        // ========== 全局变量 ==========
+        let singerData = null;      // 存储加载的歌手数据
+        let currentArtist = null;
+        let currentChart = null;
+        let allArtists = [];
+        let currentGenre = 'all';   // 当前选中的流派
+        let emotionResizeFrame = 0;
+
+        window.addEventListener('resize', () => {
+            window.cancelAnimationFrame(emotionResizeFrame);
+            emotionResizeFrame = window.requestAnimationFrame(() => currentChart?.resize());
+        });
+
+        // ========== 数据加载 ==========
+        async function loadSingerData() {
+            try {
+                const response = await fetch('singer_data.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                singerData = await response.json();
+                allArtists = Object.keys(singerData).sort();
+                console.log(`✅ 加载歌手数据成功，共 ${allArtists.length} 位歌手`);
+                // 更新头部统计卡片
+const totalArtists = allArtists.length;
+let totalSongs = 0;
+const genreSet = new Set();
+allArtists.forEach(artist => {
+    const songs = singerData[artist]?.all_songs || [];
+    totalSongs += songs.length;
+    songs.forEach(song => {
+        if (song.genre) genreSet.add(song.genre);
+    });
+});
+document.getElementById('totalArtistsCount').innerText = totalArtists;
+document.getElementById('totalGenresCount').innerText = genreSet.size;
+document.getElementById('totalSongsCount').innerText = totalSongs;
+populateGenreFilter(Array.from(genreSet).sort());
+                return true;
+            } catch (error) {
+                console.error('❌ 加载歌手数据失败:', error);
+                document.getElementById('mainContent').innerHTML = `
+                    <div class="error-message">
+                        <i class="fa-solid fa-circle-exclamation" style="font-size: 48px; margin-bottom: 16px; display: block;"></i>
+                        <h3>数据加载失败</h3>
+                        <p>请确保 singer_data.json 文件存在且格式正确</p>
+                        <p style="font-size: 12px; margin-top: 16px;">💡 提示：请使用本地服务器打开此页面（如 python -m http.server 8080）</p>
+                    </div>
+                `;
+                return false;
+            }
+        }
+
+        // ========== HTML 转义 ==========
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function populateGenreFilter(genres) {
+            const genreSelect = document.getElementById('genreFilter');
+            if (!genreSelect || genreSelect.dataset.ready === 'true') return;
+            genres.forEach(genre => {
+                const option = document.createElement('option');
+                option.value = genre;
+                option.textContent = genre;
+                genreSelect.appendChild(option);
+            });
+            genreSelect.dataset.ready = 'true';
+            genreSelect.onchange = filterArtistsByGenre;
+            window.refreshSpotifySelects?.();
+        }
+
+        // ========== 获取情绪图标 ==========
+        function getEmotionIcon(valence, energy) {
+            if (valence >= 0.5 && energy >= 0.5) return '😊';
+            if (valence < 0.5 && energy >= 0.5) return '😢';
+            if (valence < 0.5 && energy < 0.5) return '😴';
+            return '😌';
+        }
+
+        // ========== 渲染代表歌曲列表 ==========
+        /*function renderSongList(singerInfo) {
+            const songs = singerInfo.representative_songs;
+            if (!songs || songs.length === 0) {
+                return '<div style="color:#6b625f; text-align:center; padding:20px;">暂无歌曲数据</div>';
+            }
+
+            return songs.map((song, index) => {
+                const popularityClass = song.popularity >= 70 ? 'popularity-high' : '';
+                const valencePercent = (song.valence * 100).toFixed(0);
+                const energyPercent = (song.energy * 100).toFixed(0);
+                const emotionIcon = getEmotionIcon(song.valence, song.energy);
+
+                return `
+                    <div class="song-item">
+                        <div class="song-name">${index + 1}. ${escapeHtml(song.name)} ${emotionIcon}</div>
+                        <div class="song-stats">
+                            <span>🎧 愉悦度: ${valencePercent}%</span>
+                            <span>⚡ 能量: ${energyPercent}%</span>
+                            <span class="${popularityClass}">🔥 流行度: ${song.popularity}</span>
+                            <span>🏷️ ${escapeHtml(song.genre)}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }*/
+        function renderSongList(singerInfo) {
+            let songs = singerInfo.representative_songs;
+            if (!songs || songs.length === 0) {
+                return '<div style="color:#6b625f; text-align:center; padding:20px;">暂无歌曲数据</div>';
+            }
+            // 按歌曲名去重（保留第一个出现的）
+            const uniqueSongs = [];
+            const seen = new Set();
+            for (const song of songs) {
+                if (!seen.has(song.name)) {
+                    seen.add(song.name);
+                    uniqueSongs.push(song);
+                }
+            }
+            return uniqueSongs.map((song, index) => {
+                const popularityClass = song.popularity >= 70 ? 'popularity-high' : '';
+                const valencePercent = (song.valence * 100).toFixed(0);
+                const energyPercent = (song.energy * 100).toFixed(0);
+                const emotionIcon = getEmotionIcon(song.valence, song.energy);
+                return `
+            <div class="song-item">
+                <div class="song-name">${index + 1}. ${escapeHtml(song.name)} ${emotionIcon}</div>
+                <div class="song-stats">
+                    <span>🎧 愉悦度: ${valencePercent}%</span>
+                    <span>⚡ 能量: ${energyPercent}%</span>
+                    <span class="${popularityClass}">🔥 流行度: ${song.popularity}</span>
+                    <span>🏷️ ${escapeHtml(song.genre)}</span>
+                </div>
+            </div>
+        `;
+            }).join('');
+        }
+
+        // ========== 渲染四象限情绪图（支持流行度筛选） ==========
+        function renderEmotionChart(singerInfo) {
+            const chartDom = document.getElementById('emotionChart');
+            if (!chartDom) return;
+
+            if (currentChart) {
+                currentChart.dispose();
+            }
+
+            // 获取流行度阈值
+            const slider = document.getElementById('popularitySlider');
+            const threshold = slider ? parseInt(slider.value) : 0;
+            // 更新显示
+            const popSpan = document.getElementById('popThreshold');
+            if (popSpan) popSpan.innerText = threshold;
+
+            // 筛选歌曲（只显示流行度 ≥ 阈值的歌曲）
+            const allSongs = singerInfo.all_songs.filter(s => s.popularity >= threshold);
+            const repSongNames = singerInfo.representative_songs.map(s => s.name);
+
+            const normalSongs = [];
+            const repSongs = [];
+
+            allSongs.forEach(song => {
+                const point = {
+                    name: song.name,
+                    value: [song.valence, song.energy],
+                    popularity: song.popularity,
+                    genre: song.genre
+                };
+
+                if (repSongNames.includes(song.name)) {
+                    repSongs.push(point);
+                } else {
+                    normalSongs.push(point);
+                }
+            });
+
+            const option = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: function(params) {
+                        if (params.data) {
+                            return `<div style="padding: 10px 14px; background: rgba(0,0,0,0.85); border-radius: 10px;">
+                                        <strong style="color: #fff;">${escapeHtml(params.data.name)}</strong><br/>
+                                        <span style="color: rgba(255,255,255,0.7);">✨ 愉悦度:</span> <span style="color: #4ecdc4;">${(params.value[0] * 100).toFixed(0)}%</span><br/>
+                                        <span style="color: rgba(255,255,255,0.7);">⚡ 能量:</span> <span style="color: #f39c12;">${(params.value[1] * 100).toFixed(0)}%</span><br/>
+                                        <span style="color: rgba(255,255,255,0.7);">🔥 流行度:</span> <span>${params.data.popularity}</span><br/>
+                                        <span style="color: rgba(255,255,255,0.7);">🏷️ 流派:</span> <span>${escapeHtml(params.data.genre)}</span>
+                                    </div>`;
+                        }
+                        return '';
+                    },
+                    backgroundColor: 'transparent',
+                    borderWidth: 0,
+                    padding: 0
+                },
+                xAxis: {
+                    name: '✨ 愉悦度 (Valence) → 越右越开心',
+                    nameLocation: 'middle',
+                    nameGap: 35,
+                    min: 0,
+                    max: 1,
+                    splitLine: { lineStyle: { type: 'dashed', color: 'rgba(255,255,255,0.15)' } },
+                    axisLabel: {
+                        formatter: (value) => (value * 100).toFixed(0) + '%',
+                        color: '#5d4c50'
+                    },
+                    axisLine: { lineStyle: { color: 'rgba(255,255,255,0.2)' } },
+                    nameTextStyle: { color: '#5d4c50', fontSize: 12 }
+                },
+                yAxis: {
+                    name: '⚡ 能量 (Energy) → 越上越激昂',
+                    nameLocation: 'middle',
+                    nameGap: 45,
+                    min: 0,
+                    max: 1,
+                    splitLine: { lineStyle: { type: 'dashed', color: 'rgba(255,255,255,0.15)' } },
+                    axisLabel: {
+                        formatter: (value) => (value * 100).toFixed(0) + '%',
+                        color: '#5d4c50'
+                    },
+                    axisLine: { lineStyle: { color: 'rgba(255,255,255,0.2)' } },
+                    nameTextStyle: { color: '#5d4c50', fontSize: 12 }
+                },
+                series: [
+                    {
+                        name: '其他歌曲',
+                        type: 'scatter',
+                        data: normalSongs,
+                        symbolSize: 10,
+                        itemStyle: {
+                            color: '#3b82f6',
+                            opacity: 0.6,
+                            borderColor: 'rgba(255,255,255,0.3)',
+                            borderWidth: 1
+                        },
+                        emphasis: { scale: 1.2 }
+                    },
+                    {
+                        name: '代表歌曲',
+                        type: 'scatter',
+                        data: repSongs,
+                        symbolSize: 18,
+                        itemStyle: {
+                            color: '#ff5722',
+                            borderColor: '#fff',
+                            borderWidth: 2,
+                            shadowBlur: 10,
+                            shadowColor: '#ff5722'
+                        },
+                        label: {
+                            show: true,
+                            formatter: (params) => {
+                                const name = params.data.name;
+                                return name.length > 12 ? name.slice(0, 10) + '...' : name;
+                            },
+                            position: 'top',
+                            offset: [0, 12],
+                            fontSize: 10,
+                            fontWeight: 'bold',
+                            color: '#ff5722',
+                            textShadowBlur: 2,
+                            textShadowColor: '#fff'
+                        },
+                        emphasis: { scale: 1.3 }
+                    }
+                ],
+                graphic: [
+                    { type: 'line', shape: { x1: 0.5, y1: 0, x2: 0.5, y2: 1 }, style: { stroke: 'rgba(255,255,255,0.3)', lineWidth: 1.5, lineDash: [5, 5] }, z: 10 },
+                    { type: 'line', shape: { x1: 0, y1: 0.5, x2: 1, y2: 0.5 }, style: { stroke: 'rgba(255,255,255,0.3)', lineWidth: 1.5, lineDash: [5, 5] }, z: 10 },
+                    { type: 'text', left: '8%', top: '10%', style: { text: '😊 欢快/兴奋', fill: '#ff6b6b', fontSize: 13, fontWeight: 'bold' }, z: 20 },
+                    { type: 'text', left: '8%', top: '82%', style: { text: '😌 轻松/平静', fill: '#4ecdc4', fontSize: 13, fontWeight: 'bold' }, z: 20 },
+                    { type: 'text', left: '72%', top: '10%', style: { text: '😢 伤感/激昂', fill: '#a29bfe', fontSize: 13, fontWeight: 'bold' }, z: 20 },
+                    { type: 'text', left: '72%', top: '82%', style: { text: '😴 低沉/舒缓', fill: '#74b9ff', fontSize: 13, fontWeight: 'bold' }, z: 20 }
+                ],
+                grid: {
+                    containLabel: true,
+                    left: '8%',
+                    right: '8%',
+                    top: '12%',
+                    bottom: '8%',
+                    backgroundColor: 'rgba(255,255,255,0.02)',
+                    borderWidth: 0
+                },
+                backgroundColor: 'transparent'
+            };
+
+            currentChart = echarts.init(chartDom);
+            currentChart.setOption(option);
+        }
+
+        // ========== 根据流派筛选歌手 ==========
+        function filterArtistsByGenre() {
+            const genreSelect = document.getElementById('genreFilter');
+            if (!genreSelect) return;
+            
+            const genre = genreSelect.value;
+            currentGenre = genre;
+            
+            let filteredArtists = allArtists;
+            if (genre !== 'all') {
+                filteredArtists = allArtists.filter(artist => {
+                    const songs = singerData[artist]?.all_songs || [];
+                    return songs.some(song => song.genre === genre);
+                });
+            }
+            
+            // 更新歌手按钮列表
+            const artistButtons = filteredArtists.map(artist => 
+                `<button class="artist-btn" onclick="selectArtist('${escapeHtml(artist).replace(/'/g, "\\'")}')">${escapeHtml(artist)}</button>`
+            ).join('');
+            
+            const container = document.getElementById('artistButtons');
+            if (container) {
+                container.innerHTML = artistButtons || '<div style="color:#6b625f;">未找到该流派的歌手</div>';
+            }
+            
+            // 更新提示文字
+            const genreName = genre === 'all' ? '全部' : genre;
+            const count = filteredArtists.length;
+            const countSpan = document.getElementById('artistCount');
+            if (countSpan) countSpan.innerText = `${genreName} (${count}位)`;
+        }
+
+        // ========== 渲染歌手主内容 ==========
+        function renderArtistContent(artist) {
+            const singerInfo = singerData[artist];
+            if (!singerInfo) return false;
+
+            // 更新头部显示
+            document.getElementById('currentArtistDisplay').innerHTML = `<i class="fa-solid fa-microphone"></i> ${escapeHtml(artist)}`;
+
+            // 计算平均流行度（如果没有则计算）
+            const avgPopularity = singerInfo.avg_popularity || 
+                (singerInfo.all_songs.reduce((sum, s) => sum + s.popularity, 0) / singerInfo.all_songs.length).toFixed(1);
+
+            const statsHtml = `
+                <div class="stats-card">
+                    <p>🎵 共 <strong>${singerInfo.song_count}</strong> 首歌曲 | 平均流行度 <strong>${avgPopularity}</strong> | 平均愉悦度 <strong>${(singerInfo.avg_valence * 100).toFixed(0)}%</strong> | 平均能量 <strong>${(singerInfo.avg_energy * 100).toFixed(0)}%</strong></p>
+                </div>
+                <div class="stats-card" style="margin-top: 10px;">
+                    <p style="margin-bottom: 10px;">🔥 按流行度筛选歌曲：</p>
+                    <input type="range" id="popularitySlider" class="popularity-slider" min="0" max="100" value="0">
+                    <p style="margin-top: 8px;">当前显示：流行度 ≥ <span id="popThreshold">0</span> 的歌曲</p>
+                </div>
+            `;
+
+            const twoColumnsHtml = `
+                <div class="two-columns">
+                    <div class="card">
+                        <div class="card-title">🎵 代表歌曲</div>
+                        <div class="song-list">
+                            ${renderSongList(singerInfo)}
+                        </div>
+                        <div style="margin-top: 15px; font-size: 12px; color: #6b625f; text-align: center;">
+                            代表歌曲列表（按流行度排序）
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title"><i class="fa-regular fa-face-smile"></i> 情绪空间四象限图</div>
+                        <div id="emotionChart"></div>
+                        <div class="quadrant-legend">
+                            <span class="quadrant-item"><i class="fa-regular fa-face-smile"></i> Q1: 欢快/兴奋</span>
+                            <span class="quadrant-item"><i class="fa-regular fa-face-frown"></i> Q2: 伤感/激昂</span>
+                            <span class="quadrant-item"><i class="fa-regular fa-face-tired"></i> Q3: 低沉/舒缓</span>
+                            <span class="quadrant-item"><i class="fa-regular fa-face-laugh-beam"></i> Q4: 轻松/平静</span>
+                        </div>
+                        <div style="margin-top: 12px; font-size: 12px; color: #6b625f; text-align: center;">
+                            <i class="fa-regular fa-star"></i> 橙色大圆点 = 代表歌曲 | 鼠标悬停查看详情 | 拖动滑块筛选流行度
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('mainContent').innerHTML = statsHtml + twoColumnsHtml;
+
+            // 渲染图表
+            renderEmotionChart(singerInfo);
+            
+            // 绑定流行度滑块事件
+            const slider = document.getElementById('popularitySlider');
+            if (slider) {
+                // 移除旧监听，避免重复
+                const newSlider = slider.cloneNode(true);
+                slider.parentNode.replaceChild(newSlider, slider);
+                newSlider.oninput = function() {
+                    document.getElementById('popThreshold').innerText = this.value;
+                    renderEmotionChart(singerInfo);
+                };
+            }
+            
+            return true;
+        }
+
+        // ========== 显示歌手选择器 ==========
+        function showArtistSelector() {
+            if (!singerData) {
+                document.getElementById('mainContent').innerHTML = `
+                    <div class="loading-overlay">
+                        <div class="loader"></div>
+                    </div>
+                `;
+                loadSingerData().then(() => {
+                    if (singerData) showArtistSelector();
+                });
+                return;
+            }
+
+            // 填充流派下拉框（首次加载时）
+            const genreSelect = document.getElementById('genreFilter');
+            if (genreSelect && genreSelect.options.length === 1) {
+                // 收集所有流派
+                const allGenres = new Set();
+                allArtists.forEach(artist => {
+                    const songs = singerData[artist]?.all_songs || [];
+                    songs.forEach(song => {
+                        if (song.genre) allGenres.add(song.genre);
+                    });
+                });
+                Array.from(allGenres).sort().forEach(genre => {
+                    const option = document.createElement('option');
+                    option.value = genre;
+                    option.textContent = genre;
+                    genreSelect.appendChild(option);
+                });
+                
+                // 绑定流派筛选事件
+                genreSelect.onchange = function() {
+                    filterArtistsByGenre();
+                };
+            }
+            
+            // 获取当前流派筛选后的歌手列表
+            let displayArtists = allArtists;
+            if (currentGenre !== 'all') {
+                displayArtists = allArtists.filter(artist => {
+                    const songs = singerData[artist]?.all_songs || [];
+                    return songs.some(song => song.genre === currentGenre);
+                });
+            }
+
+            const artistButtons = displayArtists.map(artist => 
+                `<button class="artist-btn" onclick="selectArtist('${escapeHtml(artist).replace(/'/g, "\\'")}')">${escapeHtml(artist)}</button>`
+            ).join('');
+
+            const genreDisplay = currentGenre === 'all' ? '全部' : currentGenre;
+            document.getElementById('mainContent').innerHTML = `
+                <div class="selector-panel">
+                    <h3><i class="fa-solid fa-head-side-music"></i> 选择一位歌手</h3>
+                    <input type="text" id="searchInput" class="search-input" placeholder="🔍 搜索歌手..." onkeyup="filterArtists()">
+                    <div id="artistButtons" class="artist-buttons">
+                        ${artistButtons || '<div style="color:#6b625f;">暂无歌手数据</div>'}
+                    </div>
+                    <p style="margin-top: 25px; color: #6b625f; font-size: 12px;">✨ 共 <span id="artistCount">${genreDisplay} (${displayArtists.length}位)</span> 歌手</p>
+                </div>
+            `;
+
+            document.getElementById('currentArtistDisplay').innerHTML = '<i class="fa-regular fa-circle-question"></i> 未选择';
+            window.allArtistsList = allArtists;
+            window.currentDisplayArtists = displayArtists;
+        }
+
+        // ========== 筛选歌手（搜索框） ==========
+        function filterArtists() {
+            const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
+            
+            // 先按流派筛选，再按搜索词筛选
+            let baseArtists = allArtists;
+            if (currentGenre !== 'all') {
+                baseArtists = allArtists.filter(artist => {
+                    const songs = singerData[artist]?.all_songs || [];
+                    return songs.some(song => song.genre === currentGenre);
+                });
+            }
+            
+            const filtered = baseArtists.filter(artist => artist.toLowerCase().includes(searchTerm));
+            const artistButtons = filtered.map(artist => 
+                `<button class="artist-btn" onclick="selectArtist('${escapeHtml(artist).replace(/'/g, "\\'")}')">${escapeHtml(artist)}</button>`
+            ).join('');
+            const container = document.getElementById('artistButtons');
+            if (container) {
+                container.innerHTML = artistButtons || '<div style="color:#6b625f;">未找到匹配的歌手</div>';
+            }
+            
+            // 更新计数
+            const genreDisplay = currentGenre === 'all' ? '全部' : currentGenre;
+            const countSpan = document.getElementById('artistCount');
+            if (countSpan) countSpan.innerText = `${genreDisplay} (${filtered.length}位)`;
+        }
+        // 生成动态波浪条（黑胶唱片右侧动画）
+const waveBarsContainer = document.getElementById('wave-bars');
+if (waveBarsContainer) {
+    waveBarsContainer.innerHTML = Array.from({ length: 24 }, (_, i) => `<i style="--level:${18 + ((i * 17) % 58)}"></i>`).join("");
+}
+        // ========== 选择歌手 ==========
+        function selectArtist(artist) {
+            currentArtist = artist;
+            renderArtistContent(artist);
+            // 更新 URL 参数
+            window.history.pushState({}, '', `?artist=${encodeURIComponent(artist)}`);
+        }
+
+        // ========== 从 URL 初始化 ==========
+        async function initFromURL() {
+            await loadSingerData();
+            if (!singerData) return;
+
+            const urlParams = new URLSearchParams(window.location.search);
+            let artist = urlParams.get('artist');
+            if (artist) {
+                artist = decodeURIComponent(artist);
+                if (singerData[artist]) {
+                    renderArtistContent(artist);
+                    document.getElementById('currentArtistDisplay').innerHTML = `<i class="fa-solid fa-microphone"></i> ${escapeHtml(artist)}`;
+                    return;
+                }
+            }
+            showArtistSelector();
+        }
+
+        // ========== 页面启动 ==========
+        initFromURL();
+    </script>
+    <script src="../shared/nav.js"></script>
+    <script src="../shared/ui.js"></script>
+</body>
+</html>
